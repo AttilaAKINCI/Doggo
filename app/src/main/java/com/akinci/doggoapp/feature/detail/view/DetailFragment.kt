@@ -5,8 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.akinci.doggoapp.R
-import com.akinci.doggoapp.databinding.FragmentDashboardBinding
 import com.akinci.doggoapp.databinding.FragmentDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber

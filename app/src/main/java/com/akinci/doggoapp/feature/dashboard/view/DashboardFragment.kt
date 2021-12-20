@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.transition.Fade
@@ -25,6 +26,9 @@ class DashboardFragment : Fragment() {
     ): View {
         /** Initialization of ViewBinding, not need for DataBinding here **/
         binding = FragmentDashboardBinding.inflate(layoutInflater)
+
+        //hide appbar on splash screen
+        (activity as AppCompatActivity).supportActionBar?.show()
 
         /** view transition configuration **/
         val enterTransitionSet = TransitionSet()
