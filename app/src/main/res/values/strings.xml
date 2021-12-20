@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">DoggoApp</string>
+
+    <!-- Lottie files -->
+    <string name="lottie_doggo">doggo.json</string>
+
+    <!--  Splash Fragment   -->
+    <string name="image_transition">ImageTransition</string>
+    <string name="title_splash">Splash</string>
+    <string name="desc_splash">Splash Fragment</string>
+
+    <!--  Dashboard Fragment   -->
+    <string name="title_dashboard">Dashboard</string>
+    <string name="desc_dashboard">Dashboard Fragment</string>
+
+    <!--  Detail Fragment   -->
+    <string name="title_detail">Detail</string>
+    <string name="desc_detail">Detail Fragment</string>
+
 </resources>
