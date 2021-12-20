@@ -25,8 +25,6 @@ class SplashFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        super.onCreateView(inflater, container, savedInstanceState)
-
         // Inflate the layout for this fragment
         /** Initialization of ViewBinding not need for DataBinding here **/
         binding = FragmentSplashBinding.inflate(layoutInflater)
