@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.transition.Fade
 import androidx.transition.TransitionInflater
@@ -16,6 +17,7 @@ import com.akinci.doggoapp.R
 import com.akinci.doggoapp.common.component.SnackBar
 import com.akinci.doggoapp.common.component.TileDrawable
 import com.akinci.doggoapp.databinding.FragmentDashboardBinding
+import com.akinci.doggoapp.feature.dashboard.viewmodel.DashboardViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -23,6 +25,7 @@ import timber.log.Timber
 class DashboardFragment : Fragment() {
 
     lateinit var binding: FragmentDashboardBinding
+    private val viewModel : DashboardViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,6 +79,8 @@ class DashboardFragment : Fragment() {
 
         binding.animation.playAnimation()
 
+        // fetch initial breed data
+        viewModel.getBreedList()
     }
 
 }
