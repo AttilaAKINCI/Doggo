@@ -58,14 +58,16 @@ object AppModule {
 
     @Provides
     @BaseURL
-    fun provideBaseUrl() = RestConfig.API_BASE_URL
+    fun provideBaseUrl(): String = RestConfig.API_BASE_URL
 
     @Provides
-    fun provideMoshiConverterFactory(mosh: Moshi): MoshiConverterFactory = MoshiConverterFactory.create(mosh)
+    fun provideMoshiConverterFactory(
+        mosh: Moshi
+    ): MoshiConverterFactory = MoshiConverterFactory.create(mosh)
 
     @Singleton
     @Provides
-    fun providesMoshi() = Moshi.Builder().build()
+    fun providesMoshi(): Moshi = Moshi.Builder().build()
 
     @Qualifier
     @Retention(AnnotationRetention.BINARY)

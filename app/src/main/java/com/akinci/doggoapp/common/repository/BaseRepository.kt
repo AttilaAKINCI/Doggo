@@ -29,7 +29,8 @@ class BaseRepository @Inject constructor(
             if (response.isSuccessful) {
                 /** 200 -> 299 Error status range **/
                 response.body()?.let {
-
+                    // successful response.
+                    emit(NetworkResponse.Success(data = it))
                 } ?: run {
                     emit(NetworkResponse.Error(message = "BaseRepository: Service response body is null"))
                 }
