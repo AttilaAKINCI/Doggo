@@ -10,6 +10,13 @@
         android:layout_height="match_parent"
         tools:context=".feature.detail.view.DoggoDetailFragment">
 
+        <ImageView
+            android:id="@+id/tileImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:contentDescription="@string/image_view_content_desc" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

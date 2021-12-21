@@ -10,6 +10,13 @@
         android:layout_height="match_parent"
         tools:context=".feature.dashboard.view.DoggoDashboardFragment">
 
+        <ImageView
+            android:id="@+id/tileImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:contentDescription="@string/image_view_content_desc" />
+
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/animation"
             android:layout_width="150dp"
@@ -31,15 +38,19 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:text="@string/desc_dashboard" />
 
-        <Button
-            android:id="@+id/navigateButton"
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/openToDetailButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:text="Navigate to Detail"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="50dp"
+            android:layout_marginEnd="30dp"
+            android:alpha="0.5"
+            android:src="@drawable/ic_right_arrow"
+            app:tint="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/floating_button_content_desc" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

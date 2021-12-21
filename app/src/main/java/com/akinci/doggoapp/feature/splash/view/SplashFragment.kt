@@ -19,7 +19,8 @@ import timber.log.Timber
 class SplashFragment : Fragment() {
 
     lateinit var binding: FragmentSplashBinding
-    private val animationTime = 5000L
+   // private val animationTime = 5000L
+    private val animationTime = 100L
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,6 +50,8 @@ class SplashFragment : Fragment() {
     private fun navigateToDashboard(){
         val imageTransition = resources.getString(R.string.image_transition)
         val extras = FragmentNavigatorExtras(binding.animation to imageTransition)
+
+        Timber.d("Navigated to  DashboardFragment..")
 
         /** Navigate to Dashboard Page **/
         NavHostFragment.findNavController(this).navigate(

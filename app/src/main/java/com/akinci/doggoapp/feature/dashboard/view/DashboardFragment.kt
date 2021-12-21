@@ -1,16 +1,20 @@
 package com.akinci.doggoapp.feature.dashboard.view
 
+import android.graphics.Shader
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.transition.Fade
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionSet
 import com.akinci.doggoapp.R
+import com.akinci.doggoapp.common.component.SnackBar
+import com.akinci.doggoapp.common.component.TileDrawable
 import com.akinci.doggoapp.databinding.FragmentDashboardBinding
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -47,14 +51,24 @@ class DashboardFragment : Fragment() {
         exitTransition = exitFade
         /** **/
 
-        binding.navigateButton.setOnClickListener {
-            /** Navigate user to detail page. **/
-            NavHostFragment.findNavController(this).navigate(R.id.action_dashboardFragment_to_detailFragment)
+        // set tile background
+        val backgroundDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.pattern)
+        binding.tileImageView.setImageDrawable(TileDrawable(backgroundDrawable!!, Shader.TileMode.REPEAT))
+
+        binding.openToDetailButton.setOnClickListener{
+            SnackBar.make(binding.root, resources.getString(R.string.choose_breed_msg)).show()
+            navigateToDetailPage()
         }
 
         Timber.d("DashboardFragment created..")
         // Inflate the layout for this fragment
         return binding.root
+    }
+
+    private fun navigateToDetailPage(){
+        /** Navigate user to detail page. **/
+        Timber.d("Navigated to  DetailFragment..")
+        NavHostFragment.findNavController(this).navigate(R.id.action_dashboardFragment_to_detailFragment)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
