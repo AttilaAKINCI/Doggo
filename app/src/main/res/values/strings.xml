@@ -4,6 +4,9 @@
     <string name="image_view_content_desc">Image View Content Description</string>
     <string name="floating_button_content_desc">Floating Button Content Description</string>
 
+    <!-- Error messages -->
+    <string name="global_service_error">Unexpected service error. Please try again later....</string>
+
     <!-- Lottie files -->
     <string name="lottie_doggo">doggo.json</string>
 
@@ -15,7 +18,6 @@
     <string name="title_dashboard">Which breed is your favorite?</string>
     <string name="dashboard_welcome_info_text">Welcome to Doggo :) You can select a breed and a sub breed in order to take a look at lovely doggos </string>
     <string name="choose_breed_msg">Please choose a breed &amp; sub-breed first</string>
-
 
     <!--  Detail Fragment   -->
     <string name="title_detail">Doggos</string>

@@ -7,9 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
 import com.akinci.doggoapp.R
 import com.akinci.doggoapp.common.component.TileDrawable
 import com.akinci.doggoapp.databinding.FragmentDetailBinding
+import com.akinci.doggoapp.feature.dashboard.viewmodel.DashboardViewModel
+import com.akinci.doggoapp.feature.detail.viewmodel.DetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -17,6 +20,7 @@ import timber.log.Timber
 class DetailFragment : Fragment() {
 
     lateinit var binding: FragmentDetailBinding
+    private val viewModel : DetailViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +41,8 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.getBreeds("hound")
 
+        viewModel.getSubBreeds("hound", "afghan")
     }
 }
