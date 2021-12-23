@@ -22,6 +22,9 @@ class DashboardViewModel @Inject constructor(
     private val doggoRepository: DoggoRepository
 ): ViewModel() {
 
+    var selectedBreed: Breed? = null
+    var selectedSubBreed: Breed? = null
+
     private var breedList = listOf<Breed>()
     private var subBreedList = listOf<Breed>()
 
@@ -32,6 +35,10 @@ class DashboardViewModel @Inject constructor(
     private var _subBreedListData = MutableStateFlow<ListState<List<Breed>>>(ListState.None)
     var subBreedListData: StateFlow<ListState<List<Breed>>> = _subBreedListData
 
+    private var _continueButtonState = MutableStateFlow(false)
+    var continueButtonState: StateFlow<Boolean> = _continueButtonState
+
+    /** works like send and forget **/
     private var _uiState = MutableStateFlow<UIState>(UIState.None)
     var uiState: StateFlow<UIState> = _uiState
 
@@ -47,7 +54,8 @@ class DashboardViewModel @Inject constructor(
             }) }
 
             breedList = newList
-         //   selectedBreed = breed
+            selectedBreed = breed
+            selectedSubBreed = null
             _breedListData.emit(ListState.OnData(newList))
         }
     }
@@ -60,7 +68,9 @@ class DashboardViewModel @Inject constructor(
             }) }
 
             subBreedList = newList
+            selectedSubBreed = breed
             _subBreedListData.emit(ListState.OnData(newList))
+            _continueButtonState.emit(true)
         }
     }
 
@@ -97,6 +107,14 @@ class DashboardViewModel @Inject constructor(
                             it.message.map { item -> Breed(item)}.apply {
                                 subBreedList = this
                                 _subBreedListData.emit(ListState.OnData(subBreedList))
+                                if(isEmpty()){
+                                    /** we fetched sub breed according to breed but there is no sub breed
+                                     *  we need to continue.
+                                     * **/
+                                    _continueButtonState.emit(true)
+                                }else{
+                                    _continueButtonState.emit(false)
+                                }
                             }
                         }
                     }

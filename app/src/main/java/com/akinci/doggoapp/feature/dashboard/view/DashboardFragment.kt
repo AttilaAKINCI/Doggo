@@ -1,10 +1,13 @@
 package com.akinci.doggoapp.feature.dashboard.view
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.graphics.Shader
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -72,20 +75,23 @@ class DashboardFragment : Fragment() {
         val backgroundDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.pattern)
         binding.tileImageView.setImageDrawable(TileDrawable(backgroundDrawable!!, Shader.TileMode.REPEAT))
 
-        binding.openToDetailButton.setOnClickListener{
-            SnackBar.make(binding.root, resources.getString(R.string.choose_breed_msg)).show()
-            navigateToDetailPage()
+        binding.continueButton.setOnClickListener{
+            if(viewModel.continueButtonState.value){
+                // navigate to Doggo Detail page
+                navigateToDetailPage()
+            }else{
+                // Button is not active
+                SnackBar.make(binding.root, resources.getString(R.string.choose_breed_msg)).show()
+            }
         }
 
         breedListAdapter = BreedListAdapter(clickListener = { breed ->
             Timber.d("breed selected: ${breed.name}")
-
             viewModel.selectBreed(breed)
             viewModel.getSubBreedList(breed = breed.name)
         })
         binding.breedRecyclerList.layoutManager = StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.HORIZONTAL)
         binding.breedRecyclerList.adapter = breedListAdapter
-
 
         subBreedListAdapter = BreedListAdapter(clickListener = { subBreed ->
             Timber.d("sub breed selected: ${subBreed.name}")
@@ -102,7 +108,12 @@ class DashboardFragment : Fragment() {
     private fun navigateToDetailPage(){
         /** Navigate user to detail page. **/
         Timber.d("Navigated to  DetailFragment..")
-        NavHostFragment.findNavController(this).navigate(R.id.action_dashboardFragment_to_detailFragment)
+        NavHostFragment.findNavController(this).navigate(
+            DashboardFragmentDirections.actionDashboardFragmentToDetailFragment(
+                breed = viewModel.selectedBreed?.name ?: "",
+                subBreed = viewModel.selectedSubBreed?.name ?: ""
+            )
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -132,14 +143,26 @@ class DashboardFragment : Fragment() {
                 when(state){
                     is ListState.OnLoading -> { }
                     is ListState.OnData -> {
-                        subBreedListAdapter.submitList(state.data)
+                        state.data?.let {
+                            if(it.isNotEmpty()){
+                                subBreedListAdapter.submitList(it)
+                            }
+                        }
+                        subBreedSectionAnimation(state.data?.isNotEmpty() ?: false)
                     }
                     else -> { /** NOP **/ }
                 }
             }
         }
 
-        // observe ui states
+        // observe button states
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.continueButtonState.collect{ state ->
+                continueButtonAnimation(state)
+            }
+        }
+
+        // observe ui events
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.uiState.collect{ state ->
                 when(state){
@@ -150,6 +173,26 @@ class DashboardFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun subBreedSectionAnimation(show: Boolean){
+        val alpha = if(show){ 1f } else { 0f }
+        AnimatorSet().apply {
+            playTogether(
+                ObjectAnimator.ofFloat(binding.subBreedContainerView, "alpha", alpha),
+                ObjectAnimator.ofFloat(binding.subBreedRecyclerList, "alpha", alpha)
+            )
+            duration = 500
+            interpolator = AccelerateDecelerateInterpolator()
+        }.start()
+    }
+
+    private fun continueButtonAnimation(show: Boolean){
+        val alpha = if(show){ 1f } else { 0.5f }
+        ObjectAnimator.ofFloat(binding.continueButton, "alpha", alpha).apply {
+            duration = 300
+            interpolator = AccelerateDecelerateInterpolator()
+        }.start()
     }
 
 }

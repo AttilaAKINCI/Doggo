@@ -26,5 +26,12 @@
     <fragment
         android:id="@+id/detailFragment"
         android:name="com.akinci.doggoapp.feature.detail.view.DetailFragment"
-        android:label="@string/title_detail" />
+        android:label="@string/title_detail" >
+        <argument
+            android:name="breed"
+            app:argType="string" />
+        <argument
+            android:name="subBreed"
+            app:argType="string" />
+    </fragment>
 </navigation>
