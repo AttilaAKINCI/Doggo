@@ -20,10 +20,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
                 android:minWidth="60dp"
-                android:foreground="?android:attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
                 app:cardCornerRadius="18dp"
+                app:rippleColor="@android:color/transparent"
                 app:cardBackgroundColor="@{data.selected ? @color/teal_200 : @color/breed_row_bg }"
                 app:strokeColor="@color/card_border"
                 app:strokeWidth="@dimen/dp_1">

@@ -31,7 +31,11 @@ class BreedListAdapter(
     class BreedViewHolder(private val binding: RowBreedBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Breed, position: Int, clickListener: (Breed, Int) -> Unit) {
             binding.data = data
-            binding.breedCardView.setOnClickListener { clickListener.invoke(data, position) }
+            binding.breedCardView.setOnClickListener {
+                if(!data.selected){
+                    clickListener.invoke(data, position)
+                }
+            }
             binding.executePendingBindings()
         }
     }
@@ -39,7 +43,7 @@ class BreedListAdapter(
 
 class DiffCallBack : DiffUtil.ItemCallback<Breed>() {
     override fun areItemsTheSame(oldItem: Breed, newItem: Breed): Boolean {
-        return (oldItem.name == newItem.name)
+        return oldItem.name == newItem.name
     }
 
     override fun areContentsTheSame(oldItem: Breed, newItem: Breed): Boolean {

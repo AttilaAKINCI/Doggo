@@ -13,7 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.transition.Fade
 import androidx.transition.TransitionInflater
@@ -21,9 +21,10 @@ import androidx.transition.TransitionSet
 import com.akinci.doggoapp.R
 import com.akinci.doggoapp.common.component.SnackBar
 import com.akinci.doggoapp.common.component.TileDrawable
+import com.akinci.doggoapp.common.helper.state.ListState
+import com.akinci.doggoapp.common.helper.state.UIState
 import com.akinci.doggoapp.databinding.FragmentDashboardBinding
 import com.akinci.doggoapp.feature.dashboard.adapter.BreedListAdapter
-import com.akinci.doggoapp.feature.dashboard.viewmodel.DashboardState
 import com.akinci.doggoapp.feature.dashboard.viewmodel.DashboardViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -76,29 +77,22 @@ class DashboardFragment : Fragment() {
             navigateToDetailPage()
         }
 
-        binding.breedRecyclerList.layoutManager = StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.HORIZONTAL)
         breedListAdapter = BreedListAdapter(clickListener = { breed, position ->
             Timber.d("breed selected: ${breed.name}")
 
-
-            // todo this control shoul be moved to real data in VM in order to guarantee state of view.
-            if(viewModel.selectedBreedPosition != -1){
-                breedListAdapter.currentList[viewModel.selectedBreedPosition].selected = false
-                breedListAdapter.notifyItemChanged(viewModel.selectedBreedPosition)
-            }
-
-            viewModel.selectedBreedPosition = position
-            breedListAdapter.currentList[viewModel.selectedBreedPosition].selected = true
-            breedListAdapter.notifyItemChanged(viewModel.selectedBreedPosition)
-
-            viewModel.getSubBreedList(breed.name)
+            viewModel.selectBreed(breed)
+            viewModel.getSubBreedList(breed = breed.name)
         })
+        binding.breedRecyclerList.layoutManager = StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.HORIZONTAL)
+        binding.breedRecyclerList.adapter = breedListAdapter
 
-        binding.subBreedRecyclerList.layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL)
+
         subBreedListAdapter = BreedListAdapter(clickListener = { subBreed, position ->
             Timber.d("sub breed selected: ${subBreed.name}")
-
+            viewModel.selectSubBreed(breed = subBreed)
         })
+        binding.subBreedRecyclerList.layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL)
+        binding.subBreedRecyclerList.adapter = subBreedListAdapter
 
         Timber.d("DashboardFragment created..")
         // Inflate the layout for this fragment
@@ -119,25 +113,40 @@ class DashboardFragment : Fragment() {
         // fetch initial breed data
         viewModel.getBreedList()
 
-        viewModel.getSubBreedList("hound")
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.dashboardState.collect { uiState ->
-                    when(uiState){
-                        is DashboardState.OnServiceError -> { SnackBar.make(binding.root, resources.getString(R.string.global_service_error)) }
-                        is DashboardState.OnBreedLoading -> { }
-                        is DashboardState.OnBreedDataReceived -> {
-                            binding.breedRecyclerList.adapter = breedListAdapter
-                            breedListAdapter.submitList(uiState.data)
-                        }
-                        is DashboardState.OnSubBreedLoading -> { }
-                        is DashboardState.OnSubBreedDataReceived -> {
-                            binding.subBreedRecyclerList.adapter = subBreedListAdapter
-                            subBreedListAdapter.submitList(uiState.data)
-                        }
-                        else -> { /** No operation **/ }
+        // observe breed data
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.breedListData.collect{ state ->
+                when(state){
+                    is ListState.OnLoading -> { }
+                    is ListState.OnData -> {
+                        breedListAdapter.submitList(state.data)
                     }
+                    else -> { /** NOP **/ }
+                }
+            }
+        }
+
+        // observe breed data
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.subBreedListData.collect{ state ->
+                when(state){
+                    is ListState.OnLoading -> { }
+                    is ListState.OnData -> {
+                        subBreedListAdapter.submitList(state.data)
+                    }
+                    else -> { /** NOP **/ }
+                }
+            }
+        }
+
+        // observe ui states
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.uiState.collect{ state ->
+                when(state){
+                    is UIState.OnServiceError -> {
+                        SnackBar.make(binding.root, resources.getString(R.string.global_service_error))
+                    }
+                    else -> { /** NOP **/ }
                 }
             }
         }

@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.akinci.doggoapp.common.coroutine.CoroutineContextProvider
 import com.akinci.doggoapp.common.helper.NetworkResponse
+import com.akinci.doggoapp.common.helper.state.ListState
+import com.akinci.doggoapp.common.helper.state.UIState
 import com.akinci.doggoapp.data.doggo.repository.DoggoRepository
 import com.akinci.doggoapp.feature.dashboard.data.Breed
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,18 +22,46 @@ class DashboardViewModel @Inject constructor(
     private val doggoRepository: DoggoRepository
 ): ViewModel() {
 
-    var selectedBreedPosition = -1
-    var selectedSubBreedPosition = -1
-
-    private var breedList = mutableListOf<Breed>()
-    private var subBreedList = mutableListOf<Breed>()
+    private var breedList = listOf<Breed>()
+    private var subBreedList = listOf<Breed>()
 
     /** Fragments are driven with states **/
-    private var _dashboardState = MutableStateFlow<DashboardState<List<Breed>>>(DashboardState.None)
-    var dashboardState: StateFlow<DashboardState<List<Breed>>> = _dashboardState
+    private var _breedListData = MutableStateFlow<ListState<List<Breed>>>(ListState.None)
+    var breedListData: StateFlow<ListState<List<Breed>>> = _breedListData
+
+    private var _subBreedListData = MutableStateFlow<ListState<List<Breed>>>(ListState.None)
+    var subBreedListData: StateFlow<ListState<List<Breed>>> = _subBreedListData
+
+    private var _uiState = MutableStateFlow<UIState>(UIState.None)
+    var uiState: StateFlow<UIState> = _uiState
 
     init {
         Timber.d("DashboardViewModel created..")
+    }
+
+    fun selectBreed(breed: Breed){
+        viewModelScope.launch(coroutineContext.IO) {
+            val newList = mutableListOf<Breed>()
+            breedList.forEach { item -> newList.add(item.copy().apply {
+                selected = (name == breed.name)
+            }) }
+
+            breedList = newList
+         //   selectedBreed = breed
+            _breedListData.emit(ListState.OnData(newList))
+        }
+    }
+
+    fun selectSubBreed(breed: Breed){
+        viewModelScope.launch(coroutineContext.IO) {
+            val newList = mutableListOf<Breed>()
+            subBreedList.forEach { item -> newList.add(item.copy().apply {
+                selected = (name == breed.name)
+            }) }
+
+            subBreedList = newList
+            _subBreedListData.emit(ListState.OnData(newList))
+        }
     }
 
     fun getBreedList() {
@@ -39,15 +69,14 @@ class DashboardViewModel @Inject constructor(
             viewModelScope.launch(coroutineContext.IO) {
                 doggoRepository.getBreedList().collect { networkResponse ->
                     when(networkResponse){
-                        is NetworkResponse.Loading -> { _dashboardState.emit(DashboardState.OnBreedLoading) }
-                        is NetworkResponse.Error -> { _dashboardState.emit(DashboardState.OnServiceError) }
+                        is NetworkResponse.Loading -> { _breedListData.emit(ListState.OnLoading) }
+                        is NetworkResponse.Error -> { _uiState.emit(UIState.OnServiceError) }
                         is NetworkResponse.Success -> {
                             networkResponse.data?.let {
-                                it.message.keys.toMutableList()
-                                    .map { item -> Breed(item) } // service response mapped Breed object
+                                it.message.keys.map { item -> Breed(item) } // service response mapped Breed object
                                     .apply {
-                                        breedList.addAll(this)
-                                        _dashboardState.emit(DashboardState.OnBreedDataReceived(this))
+                                        breedList = this
+                                        _breedListData.emit(ListState.OnData(breedList))
                                     }
                             }
                         }
@@ -58,20 +87,16 @@ class DashboardViewModel @Inject constructor(
     }
 
     fun getSubBreedList(breed: String) {
-        if(subBreedList.isEmpty()){
-            viewModelScope.launch(coroutineContext.IO) {
-                doggoRepository.getSubBreedList(breed).collect { networkResponse ->
-                    when(networkResponse){
-                        is NetworkResponse.Loading -> { _dashboardState.emit(DashboardState.OnSubBreedLoading) }
-                        is NetworkResponse.Error -> { _dashboardState.emit(DashboardState.OnServiceError) }
-                        is NetworkResponse.Success -> {
-                            networkResponse.data?.let {
-                                it.message.toMutableList()
-                                    .map { item -> Breed(item)}
-                                    .apply {
-                                        breedList.addAll(this)
-                                        _dashboardState.emit(DashboardState.OnSubBreedDataReceived(this))
-                                    }
+        viewModelScope.launch(coroutineContext.IO) {
+            doggoRepository.getSubBreedList(breed).collect { networkResponse ->
+                when(networkResponse){
+                    is NetworkResponse.Loading -> { _subBreedListData.emit(ListState.OnLoading) }
+                    is NetworkResponse.Error -> { _uiState.emit(UIState.OnServiceError) }
+                    is NetworkResponse.Success -> {
+                        networkResponse.data?.let {
+                            it.message.map { item -> Breed(item)}.apply {
+                                subBreedList = this
+                                _subBreedListData.emit(ListState.OnData(subBreedList))
                             }
                         }
                     }
