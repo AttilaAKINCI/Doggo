@@ -77,7 +77,7 @@ class DashboardFragment : Fragment() {
             navigateToDetailPage()
         }
 
-        breedListAdapter = BreedListAdapter(clickListener = { breed, position ->
+        breedListAdapter = BreedListAdapter(clickListener = { breed ->
             Timber.d("breed selected: ${breed.name}")
 
             viewModel.selectBreed(breed)
@@ -87,7 +87,7 @@ class DashboardFragment : Fragment() {
         binding.breedRecyclerList.adapter = breedListAdapter
 
 
-        subBreedListAdapter = BreedListAdapter(clickListener = { subBreed, position ->
+        subBreedListAdapter = BreedListAdapter(clickListener = { subBreed ->
             Timber.d("sub breed selected: ${subBreed.name}")
             viewModel.selectSubBreed(breed = subBreed)
         })

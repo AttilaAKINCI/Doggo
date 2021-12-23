@@ -11,7 +11,7 @@ import com.akinci.doggoapp.databinding.RowBreedBinding
 import com.akinci.doggoapp.feature.dashboard.data.Breed
 
 class BreedListAdapter(
-    private val clickListener: (Breed, Int) -> Unit
+    private val clickListener: (Breed) -> Unit
 ): ListAdapter<Breed, BreedListAdapter.BreedViewHolder>(DiffCallBack()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BreedViewHolder {
@@ -23,17 +23,16 @@ class BreedListAdapter(
         val item = getItem(position)
         holder.bind(
             item,
-            position,
             clickListener
         )
     }
 
     class BreedViewHolder(private val binding: RowBreedBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: Breed, position: Int, clickListener: (Breed, Int) -> Unit) {
+        fun bind(data: Breed, clickListener: (Breed) -> Unit) {
             binding.data = data
             binding.breedCardView.setOnClickListener {
                 if(!data.selected){
-                    clickListener.invoke(data, position)
+                    clickListener.invoke(data)
                 }
             }
             binding.executePendingBindings()
