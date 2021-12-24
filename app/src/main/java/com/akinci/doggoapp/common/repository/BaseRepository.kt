@@ -1,8 +1,8 @@
 package com.akinci.doggoapp.common.repository
 
-
 import com.akinci.doggoapp.common.helper.NetworkResponse
 import com.akinci.doggoapp.common.network.NetworkChecker
+import com.akinci.doggoapp.common.network.NetworkState
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import retrofit2.Response
@@ -22,7 +22,7 @@ class BaseRepository @Inject constructor(
         emit(NetworkResponse.Loading())
 
         // check internet connection
-        if (networkChecker.isNetworkConnected()) {
+        if (networkChecker.networkState.value == NetworkState.Connected) {
             // internet connection is established.
             // invoke service generic part.
             val response = retrofitServiceAction.invoke()

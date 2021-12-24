@@ -2,31 +2,64 @@ package com.akinci.doggoapp.common.network
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.Network
 import android.net.NetworkCapabilities
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
-import javax.inject.Singleton
+import android.net.NetworkRequest
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class NetworkChecker (
     private val context: Context
 ) {
-    fun isNetworkConnected(): Boolean {
-        val connectivityManager = context.getSystemService(
-            Context.CONNECTIVITY_SERVICE
-        ) as ConnectivityManager
+    private val _networkState = MutableStateFlow<NetworkState>(NetworkState.None)
+    val networkState: StateFlow<NetworkState> = _networkState
 
-        val networkCapabilities = connectivityManager.activeNetwork ?: return false
-        val activeNetwork = connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
+    private val validTransportTypes by lazy {
+        listOf(
+            NetworkCapabilities.TRANSPORT_WIFI,
+            NetworkCapabilities.TRANSPORT_CELLULAR
+        )
+    }
 
-        val validTransportTypes =
-                listOf(
-                        NetworkCapabilities.TRANSPORT_WIFI,
-                        NetworkCapabilities.TRANSPORT_CELLULAR,
-                        NetworkCapabilities.TRANSPORT_ETHERNET
-                )
+    private val networkCallback by lazy {
+        object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+                _networkState.value = NetworkState.Connected
+            }
 
-        return validTransportTypes.any {
-            activeNetwork.hasTransport(it)
+            override fun onLost(network: Network) {
+                super.onLost(network)
+                _networkState.value = NetworkState.NotConnected
+            }
         }
+    }
+
+    private val connectivityManager: ConnectivityManager by lazy {
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
+
+    init {
+        /** initial value of stateflow is set **/
+        connectivityManager.activeNetwork?.let { network ->
+            connectivityManager.getNetworkCapabilities(network)?.let {  networkCapabilities ->
+                if(validTransportTypes.any { networkCapabilities.hasTransport(it) }){
+                    _networkState.value = NetworkState.Connected
+                }else{
+                    _networkState.value = NetworkState.NotConnected
+                }
+            } ?: run {
+                _networkState.value = NetworkState.NotConnected
+            }
+        } ?: run {
+            _networkState.value = NetworkState.NotConnected
+        }
+
+        /** update stateflow when status changed. **/
+        val builder = NetworkRequest.Builder().apply {
+            validTransportTypes.onEach { addTransportType(it) }
+        }
+
+        connectivityManager.registerNetworkCallback(builder.build(), networkCallback)
     }
 }
