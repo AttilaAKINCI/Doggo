@@ -1,9 +1,9 @@
-package com.akinci.doggoapp.data.doggo.api
+package com.akinci.doggoapp.data.remote.api
 
 import com.akinci.doggoapp.common.network.RestConfig
-import com.akinci.doggoapp.data.doggo.output.BreedListResponse
-import com.akinci.doggoapp.data.doggo.output.BreedResponse
-import com.akinci.doggoapp.data.doggo.output.SubBreedListResponse
+import com.akinci.doggoapp.data.remote.output.BreedListResponse
+import com.akinci.doggoapp.data.remote.output.BreedResponse
+import com.akinci.doggoapp.data.remote.output.SubBreedListResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

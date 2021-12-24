@@ -1,10 +1,10 @@
-package com.akinci.doggoapp.data.doggo.local.dao
+package com.akinci.doggoapp.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.akinci.doggoapp.data.doggo.local.entity.SubBreedEntity
+import com.akinci.doggoapp.data.local.entity.SubBreedEntity
 
 @Dao
 interface SubBreedDao {

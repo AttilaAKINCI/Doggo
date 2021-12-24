@@ -8,7 +8,7 @@ import com.akinci.doggoapp.common.network.NetworkChecker
 import com.akinci.doggoapp.common.network.RestConfig
 import com.akinci.doggoapp.common.repository.BaseRepository
 import com.akinci.doggoapp.common.room.RoomConfig.Companion.DB_NAME
-import com.akinci.doggoapp.data.doggo.local.DoggoDatabase
+import com.akinci.doggoapp.data.local.DoggoDatabase
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -116,7 +116,7 @@ object AppModule {
     /** ROOM DB **/
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context) =
+    fun provideDatabase(@ApplicationContext context: Context): DoggoDatabase =
         Room.databaseBuilder(
             context.applicationContext,
             DoggoDatabase::class.java,

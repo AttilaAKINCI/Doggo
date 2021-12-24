@@ -1,4 +1,4 @@
-package com.akinci.doggoapp.data.doggo.output
+package com.akinci.doggoapp.data.remote.output
 
 import com.squareup.moshi.JsonClass
 

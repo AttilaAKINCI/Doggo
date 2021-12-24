@@ -6,7 +6,7 @@ import com.akinci.doggoapp.common.coroutine.CoroutineContextProvider
 import com.akinci.doggoapp.common.helper.NetworkResponse
 import com.akinci.doggoapp.common.helper.state.ListState
 import com.akinci.doggoapp.common.helper.state.UIState
-import com.akinci.doggoapp.data.doggo.repository.DoggoRepository
+import com.akinci.doggoapp.data.repository.DoggoRepository
 import com.akinci.doggoapp.feature.dashboard.data.Breed
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

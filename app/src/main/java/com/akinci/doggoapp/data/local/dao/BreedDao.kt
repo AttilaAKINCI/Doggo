@@ -1,7 +1,7 @@
-package com.akinci.doggoapp.data.doggo.local.dao
+package com.akinci.doggoapp.data.local.dao
 
 import androidx.room.*
-import com.akinci.doggoapp.data.doggo.local.entity.BreedEntity
+import com.akinci.doggoapp.data.local.entity.BreedEntity
 
 @Dao
 interface BreedDao {
