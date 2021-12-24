@@ -38,7 +38,8 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="@string/detail_title"
+                tools:text="@string/detail_title_placeholder"
+                android:textAllCaps="true"
                 android:fontFamily="monospace"
                 android:textStyle="bold"
                 android:typeface="normal" />

@@ -23,7 +23,7 @@
 
     <!--  Detail Fragment   -->
     <string name="title_detail">Doggos</string>
-    <string name="detail_title">SAMPLE BREEDS / SUB BREEDS</string>
-    <string name="detail_title_only_breed">SAMPLE BREEDS</string>
+    <string name="detail_title">%1$s / %2$s</string>
+    <string name="detail_title_placeholder">SAMPLE BREEDS / SUB BREEDS</string>
 
 </resources>
