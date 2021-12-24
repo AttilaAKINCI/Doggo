@@ -12,7 +12,7 @@ interface ContentDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertContent(contentList: List<ContentEntity>)
 
-    @Query("SELECT * FROM contentTable ORDER BY id ASC")
-    fun getAllContents(): List<ContentEntity>
+    @Query("SELECT * FROM contentTable WHERE breed=:breed AND subBreed=:subBread ORDER BY id ASC")
+    fun getAllContents(breed:String, subBread:String): List<ContentEntity>
 
 }

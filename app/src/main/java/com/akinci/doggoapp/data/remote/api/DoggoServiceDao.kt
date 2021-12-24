@@ -17,13 +17,13 @@ interface DoggoServiceDao {
     suspend fun getSubBreedList(@Path("breed") breed: String) : Response<SubBreedListResponse>
 
     @GET(RestConfig.GET_BREED)
-    suspend fun getBreeds(
+    suspend fun getBreedContent(
         @Path("breed") breed: String,
         @Path("count") count: Int
     ) : Response<BreedResponse>
 
     @GET(RestConfig.GET_SUB_BREED)
-    suspend fun getSubBreeds(
+    suspend fun getSubBreedContent(
         @Path("breed") breed: String,
         @Path("subBread") subBread: String,
         @Path("count") count: Int

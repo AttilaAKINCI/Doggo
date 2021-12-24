@@ -40,6 +40,13 @@ class DetailFragment : Fragment() {
         /** Initialization of ViewBinding, not need for DataBinding here **/
         binding = FragmentDetailBinding.inflate(layoutInflater)
 
+        // Set content Title
+        if(detailArgs.subBreed.isNotBlank()){
+            binding.detailTitleTextView.text = resources.getString(R.string.detail_title, detailArgs.breed, detailArgs.subBreed)
+        }else{
+            binding.detailTitleTextView.text = detailArgs.breed
+        }
+
         // set tile background
         val backgroundDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.pattern)
         binding.tileImageView.setImageDrawable(TileDrawable(backgroundDrawable!!, Shader.TileMode.REPEAT))
@@ -52,13 +59,8 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if(detailArgs.subBreed.isNotBlank()){
-            binding.detailTitleTextView.text = resources.getString(R.string.detail_title, detailArgs.breed, detailArgs.subBreed)
-            viewModel.getSubBreeds(detailArgs.breed, detailArgs.subBreed)
-        }else{
-            binding.detailTitleTextView.text = detailArgs.breed
-            viewModel.getBreeds(detailArgs.breed)
-        }
+        // fetch contents
+        viewModel.getContent(detailArgs.breed, detailArgs.subBreed)
 
         // observe breed image data
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {

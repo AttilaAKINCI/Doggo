@@ -12,7 +12,7 @@ interface SubBreedDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSubBreed(subBreedList: List<SubBreedEntity>)
 
-    @Query("SELECT * FROM subBreedTable ORDER BY id ASC")
-    fun getAllSubBreeds(): List<SubBreedEntity>
+    @Query("SELECT * FROM subBreedTable WHERE breed =:breed ORDER BY id ASC")
+    fun getAllSubBreeds(breed: String): List<SubBreedEntity>
 
 }
