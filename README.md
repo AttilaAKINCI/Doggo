@@ -14,6 +14,14 @@ Doggo App provides a inspection on dogs according to their breeds and sub-breeds
 ## Application UI Flow
 
 #### ScreenShots
+<img src="https://github.com/AttilaAKINCI/DoggoApp/blob/master/images/1.png" width="200">   <img
+src="https://github.com/AttilaAKINCI/DoggoApp/blob/master/images/2.png" width="200">   <img
+src="https://github.com/AttilaAKINCI/DoggoApp/blob/master/images/3.png" width="200">   <img
+src="https://github.com/AttilaAKINCI/DoggoApp/blob/master/images/4.png" width="200">   <img
+src="https://github.com/AttilaAKINCI/DoggoApp/blob/master/images/5.png" width="200">   <img
+src="https://github.com/AttilaAKINCI/DoggoApp/blob/master/images/6.png" width="200">   <img
+src="https://github.com/AttilaAKINCI/DoggoApp/blob/master/images/7.png" width="200">   <img
+src="https://github.com/AttilaAKINCI/DoggoApp/blob/master/images/8.png" width="200"> 
 
 # License
 
