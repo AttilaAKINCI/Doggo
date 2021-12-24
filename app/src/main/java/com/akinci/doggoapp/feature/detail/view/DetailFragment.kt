@@ -53,9 +53,10 @@ class DetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if(detailArgs.subBreed.isNotBlank()){
+            binding.detailTitleTextView.text = resources.getString(R.string.detail_title, detailArgs.breed, detailArgs.subBreed)
             viewModel.getSubBreeds(detailArgs.breed, detailArgs.subBreed)
         }else{
-            binding.detailTitleTextView.text = resources.getString(R.string.detail_title_only_breed)
+            binding.detailTitleTextView.text = detailArgs.breed
             viewModel.getBreeds(detailArgs.breed)
         }
 

@@ -1,11 +1,14 @@
 package com.akinci.doggoapp.common.di
 
 import android.content.Context
+import androidx.room.Room
 import com.akinci.doggoapp.BuildConfig
 import com.akinci.doggoapp.common.coroutine.CoroutineContextProvider
 import com.akinci.doggoapp.common.network.NetworkChecker
 import com.akinci.doggoapp.common.network.RestConfig
 import com.akinci.doggoapp.common.repository.BaseRepository
+import com.akinci.doggoapp.common.room.RoomConfig.Companion.DB_NAME
+import com.akinci.doggoapp.data.doggo.local.DoggoDatabase
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -107,6 +110,18 @@ object AppModule {
         .client(okHttpClient)
         .addConverterFactory(converter)
         .build()
+    /** END **/
+
+
+    /** ROOM DB **/
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext context: Context) =
+        Room.databaseBuilder(
+            context.applicationContext,
+            DoggoDatabase::class.java,
+            DB_NAME
+        ).fallbackToDestructiveMigration().build()
     /** END **/
 
 }
