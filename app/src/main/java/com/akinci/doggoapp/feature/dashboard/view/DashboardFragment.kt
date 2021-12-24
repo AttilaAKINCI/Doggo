@@ -12,11 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.transition.Fade
 import androidx.transition.TransitionInflater
@@ -31,7 +28,6 @@ import com.akinci.doggoapp.feature.dashboard.adapter.BreedListAdapter
 import com.akinci.doggoapp.feature.dashboard.viewmodel.DashboardViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -100,6 +96,11 @@ class DashboardFragment : Fragment() {
         binding.subBreedRecyclerList.layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL)
         binding.subBreedRecyclerList.adapter = subBreedListAdapter
 
+        if(viewModel.firstLoading){
+            binding.breedContainerView.alpha = 0f
+            binding.breedRecyclerList.alpha = 0f
+        }
+
         Timber.d("DashboardFragment created..")
         // Inflate the layout for this fragment
         return binding.root
@@ -130,7 +131,13 @@ class DashboardFragment : Fragment() {
                 when(state){
                     is ListState.OnLoading -> { }
                     is ListState.OnData -> {
-                        breedListAdapter.submitList(state.data)
+                        if(state.data?.isNotEmpty() == true){
+                            if(viewModel.firstLoading){
+                                breedSectionAnimation(true)
+                                viewModel.firstLoading = false
+                            }
+                            breedListAdapter.submitList(state.data)
+                        }
                     }
                     else -> { /** NOP **/ }
                 }
@@ -173,6 +180,19 @@ class DashboardFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun breedSectionAnimation(show: Boolean){
+        val alpha = if(show){ 1f } else { 0f }
+        AnimatorSet().apply {
+            playTogether(
+                ObjectAnimator.ofFloat(binding.breedContainerView, "alpha", alpha),
+                ObjectAnimator.ofFloat(binding.breedRecyclerList, "alpha", alpha)
+            )
+            startDelay = 1000
+            duration = 500
+            interpolator = AccelerateDecelerateInterpolator()
+        }.start()
     }
 
     private fun subBreedSectionAnimation(show: Boolean){

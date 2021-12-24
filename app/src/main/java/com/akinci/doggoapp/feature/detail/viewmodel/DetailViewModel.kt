@@ -42,7 +42,7 @@ class DetailViewModel @Inject constructor(
                     is NetworkResponse.Loading -> { _breedImageListData.emit(ListState.OnLoading) }
                     is NetworkResponse.Error -> { _uiState.emit(UIState.OnServiceError) }
                     is NetworkResponse.Success -> {
-                        delay(5000L) // in order to simulate network delay. show shimmer
+                        delay(3000L) // in order to simulate network delay. show shimmer
                         _breedImageListData.emit(ListState.OnData(networkResponse.data?.message))
                     }
                 }
@@ -57,7 +57,7 @@ class DetailViewModel @Inject constructor(
                     is NetworkResponse.Loading -> { _breedImageListData.emit(ListState.OnLoading) }
                     is NetworkResponse.Error -> { _uiState.emit(UIState.OnServiceError) }
                     is NetworkResponse.Success -> {
-                        delay(5000L) // in order to simulate network delay. show shimmer
+                        delay(3000L) // in order to simulate network delay. show shimmer
                         _breedImageListData.emit(ListState.OnData(networkResponse.data?.message))
                     }
                 }

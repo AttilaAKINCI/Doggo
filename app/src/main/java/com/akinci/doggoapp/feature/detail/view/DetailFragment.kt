@@ -2,11 +2,11 @@ package com.akinci.doggoapp.feature.detail.view
 
 import android.graphics.Shader
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.akinci.doggoapp.R
@@ -15,10 +15,8 @@ import com.akinci.doggoapp.common.component.TileDrawable
 import com.akinci.doggoapp.common.helper.state.ListState
 import com.akinci.doggoapp.common.helper.state.UIState
 import com.akinci.doggoapp.databinding.FragmentDetailBinding
-import com.akinci.doggoapp.feature.dashboard.adapter.BreedListAdapter
-import com.akinci.doggoapp.feature.dashboard.adapter.ShimmerAdapter
-import com.akinci.doggoapp.feature.dashboard.viewmodel.DashboardViewModel
 import com.akinci.doggoapp.feature.detail.adapter.DetailListAdapter
+import com.akinci.doggoapp.feature.detail.adapter.ShimmerAdapter
 import com.akinci.doggoapp.feature.detail.viewmodel.DetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -57,6 +55,7 @@ class DetailFragment : Fragment() {
         if(detailArgs.subBreed.isNotBlank()){
             viewModel.getSubBreeds(detailArgs.breed, detailArgs.subBreed)
         }else{
+            binding.detailTitleTextView.text = resources.getString(R.string.detail_title_only_breed)
             viewModel.getBreeds(detailArgs.breed)
         }
 

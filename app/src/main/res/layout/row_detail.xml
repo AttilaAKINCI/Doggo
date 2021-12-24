@@ -3,40 +3,45 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/breedCardView"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_margin="10dp"
+        android:minWidth="60dp"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@android:color/transparent">
 
-    <RelativeLayout
-        android:id="@+id/containerLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp">
+        <ImageView
+            android:id="@+id/doggoImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/image_view_content_desc" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/breedCardView"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:minWidth="60dp"
-                android:clickable="true"
-                android:focusable="true"
-                app:cardCornerRadius="18dp"
-                app:rippleColor="@android:color/transparent"
-                app:cardBackgroundColor="@color/breed_row_bg"
-                app:strokeColor="@color/card_border"
-                app:strokeWidth="@dimen/dp_1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white_40"
+            android:layout_gravity="bottom"
+            android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/breedNameTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    tools:text="Hound"
-                    android:textColor="@color/card_border"
-                    android:fontFamily="monospace"
-                    android:textStyle="bold"
-                    android:typeface="normal"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"/>
+            <TextView
+                android:id="@+id/doggoNameTextView"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="10dp"
+                android:fontFamily="@font/bangers"
+                android:textColor="@color/detail_text_color"
+                android:textAlignment="center"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:typeface="normal"
+                android:letterSpacing="0.1"
+                tools:text="Teddy" />
 
-            </com.google.android.material.card.MaterialCardView>
-    </RelativeLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 </layout>

@@ -1,4 +1,4 @@
-package com.akinci.doggoapp.feature.dashboard.adapter
+package com.akinci.doggoapp.feature.detail.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

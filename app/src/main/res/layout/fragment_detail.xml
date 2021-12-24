@@ -32,6 +32,7 @@
             android:background="@drawable/breed_title_bg">
 
             <TextView
+                android:id="@+id/detailTitleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

@@ -22,6 +22,8 @@ class DashboardViewModel @Inject constructor(
     private val doggoRepository: DoggoRepository
 ): ViewModel() {
 
+    var firstLoading = true
+
     var selectedBreed: Breed? = null
     var selectedSubBreed: Breed? = null
 

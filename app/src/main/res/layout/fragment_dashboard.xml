@@ -35,6 +35,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     android:layout_margin="20dp"
                     app:cardCornerRadius="10dp"
+                    app:cardElevation="0dp"
                     app:cardBackgroundColor="@color/teal_200_90"
                     app:strokeWidth="1dp"
                     app:strokeColor="@color/card_border">

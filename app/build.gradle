@@ -69,6 +69,9 @@ dependencies {
     implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03'
     kapt 'androidx.hilt:hilt-compiler:1.0.0'
 
+    //Image Loading
+    implementation "io.coil-kt:coil:1.4.0"
+
     //Timber logging
     implementation 'com.jakewharton.timber:timber:4.7.1'
 

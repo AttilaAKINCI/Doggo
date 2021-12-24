@@ -7,37 +7,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <RelativeLayout
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/breedCardView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="300dp"
+            android:layout_margin="10dp"
+            android:minWidth="60dp"
+            app:cardCornerRadius="18dp">
 
-            <androidx.cardview.widget.CardView
+            <View
+                android:id="@+id/img"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                app:cardCornerRadius="5dp">
+                android:layout_height="match_parent"
+                android:background="@color/shimmerColor"/>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="180dp">
+        </com.google.android.material.card.MaterialCardView>
 
-                    <View
-                        android:id="@+id/img"
-                        android:layout_width="match_parent"
-                        android:layout_height="140dp"
-                        android:layout_margin="5dp"
-                        android:background="@color/shimmerColor"/>
-
-                    <View
-                        android:id="@+id/v1"
-                        android:layout_width="match_parent"
-                        android:layout_height="20dp"
-                        android:background="@color/shimmerColor"
-                        android:layout_margin="5dp"
-                        android:layout_below="@+id/img"/>
-
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-        </RelativeLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>
 </layout>

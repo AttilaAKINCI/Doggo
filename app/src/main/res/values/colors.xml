@@ -12,9 +12,10 @@
     <!-- Dashboard info card bg -->
     <color name="teal_200_80">#CC03DAC5</color>
     <color name="teal_200_90">#E603DAC5</color>
-    <color name="white_80">#CCFFFFFF</color>
+    <color name="white_40">#66FFFFFF</color>
     <color name="breed_row_bg">#eaeaea</color>
     <color name="card_border">#222222</color>
+    <color name="detail_text_color">#333333</color>
 
     <color name="shimmerColor">#AAAAAA</color>
 
