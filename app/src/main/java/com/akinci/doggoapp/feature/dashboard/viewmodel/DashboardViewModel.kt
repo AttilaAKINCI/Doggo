@@ -6,12 +6,13 @@ import com.akinci.doggoapp.common.coroutine.CoroutineContextProvider
 import com.akinci.doggoapp.common.helper.NetworkResponse
 import com.akinci.doggoapp.common.helper.state.ListState
 import com.akinci.doggoapp.common.helper.state.UIState
+import com.akinci.doggoapp.common.network.NetworkChecker
 import com.akinci.doggoapp.data.local.dao.BreedDao
 import com.akinci.doggoapp.data.local.dao.SubBreedDao
+import com.akinci.doggoapp.data.mapper.convertToBreedListEntity
+import com.akinci.doggoapp.data.mapper.convertToSubBreedListEntity
 import com.akinci.doggoapp.data.repository.DoggoRepository
 import com.akinci.doggoapp.feature.dashboard.data.Breed
-import com.akinci.doggoapp.feature.dashboard.data.convertToBreedListEntity
-import com.akinci.doggoapp.feature.dashboard.data.convertToSubBreedListEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +26,8 @@ class DashboardViewModel @Inject constructor(
     private val coroutineContext: CoroutineContextProvider,
     private val doggoRepository: DoggoRepository,
     private val breedDao: BreedDao,
-    private val subBreedDao: SubBreedDao
+    private val subBreedDao: SubBreedDao,
+    val networkChecker: NetworkChecker
 ): ViewModel() {
 
     var firstLoading = true
@@ -94,6 +96,7 @@ class DashboardViewModel @Inject constructor(
                                 it.message.keys.map { item -> Breed(item) } // service response mapped Breed object
                                     .apply {
                                         breedList = this
+                                        // saves fetched data to room db
                                         breedDao.insertBreed(convertToBreedListEntity())
                                         _breedListData.emit(ListState.OnData(breedList))
                                     }
@@ -115,6 +118,7 @@ class DashboardViewModel @Inject constructor(
                         networkResponse.data?.let {
                             it.message.map { item -> Breed(item)}.apply {
                                 subBreedList = this
+                                // saves fetched data to room db
                                 subBreedDao.insertSubBreed(convertToSubBreedListEntity(ownerBreed = breed))
                                 _subBreedListData.emit(ListState.OnData(subBreedList))
                                 if(isEmpty()){

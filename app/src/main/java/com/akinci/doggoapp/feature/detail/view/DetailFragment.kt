@@ -5,11 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.NavHostFragment
 import com.akinci.doggoapp.R
+import com.akinci.doggoapp.common.component.DialogProvider
 import com.akinci.doggoapp.common.component.SnackBar
 import com.akinci.doggoapp.common.component.TileDrawable
 import com.akinci.doggoapp.common.helper.state.ListState
@@ -59,8 +62,7 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // fetch contents
-        viewModel.getContent(detailArgs.breed, detailArgs.subBreed)
+        fetchDoggoContentData()
 
         // observe breed image data
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
@@ -71,7 +73,16 @@ class DetailFragment : Fragment() {
                     }
                     is ListState.OnData -> {
                         binding.detailBreedImageRecyclerList.adapter = detailImageListAdapter
-                        detailImageListAdapter.submitList(state.data)
+
+                        if(state.data?.isNotEmpty() == true){
+                            detailImageListAdapter.submitList(state.data)
+                        }else{
+                            DialogProvider.createNoDataAlertDialog(
+                                requireContext(),
+                                positiveAction = { fetchDoggoContentData() },
+                                negativeAction = { navigateBack() }
+                            )
+                        }
                     }
                     else -> { /** NOP **/ }
                 }
@@ -89,6 +100,14 @@ class DetailFragment : Fragment() {
                 }
             }
         }
+    }
 
+    private fun navigateBack(){
+        NavHostFragment.findNavController(this).popBackStack()
+    }
+
+    private fun fetchDoggoContentData(){
+        // fetch contents
+        viewModel.getDoggoContent(detailArgs.breed, detailArgs.subBreed)
     }
 }

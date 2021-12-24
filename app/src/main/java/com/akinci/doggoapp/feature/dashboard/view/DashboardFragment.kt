@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.animation.doOnEnd
+import androidx.core.animation.doOnStart
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -19,10 +21,12 @@ import androidx.transition.Fade
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionSet
 import com.akinci.doggoapp.R
+import com.akinci.doggoapp.common.component.DialogProvider
 import com.akinci.doggoapp.common.component.SnackBar
 import com.akinci.doggoapp.common.component.TileDrawable
 import com.akinci.doggoapp.common.helper.state.ListState
 import com.akinci.doggoapp.common.helper.state.UIState
+import com.akinci.doggoapp.common.network.NetworkState
 import com.akinci.doggoapp.databinding.FragmentDashboardBinding
 import com.akinci.doggoapp.feature.dashboard.adapter.BreedListAdapter
 import com.akinci.doggoapp.feature.dashboard.viewmodel.DashboardViewModel
@@ -70,6 +74,8 @@ class DashboardFragment : Fragment() {
         // set tile background
         val backgroundDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.pattern)
         binding.tileImageView.setImageDrawable(TileDrawable(backgroundDrawable!!, Shader.TileMode.REPEAT))
+
+        binding.offlineInformationCardView.visibility = if(viewModel.networkChecker.networkState.value == NetworkState.NotConnected) { View.VISIBLE } else { View.GONE }
 
         binding.continueButton.setOnClickListener{
             if(viewModel.continueButtonState.value){
@@ -119,11 +125,9 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding.animation.playAnimation()
 
-        // fetch initial breed data
-        viewModel.getBreedList()
+        getInitialData()
 
         // observe breed data
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
@@ -137,6 +141,11 @@ class DashboardFragment : Fragment() {
                                 viewModel.firstLoading = false
                             }
                             breedListAdapter.submitList(state.data)
+                        }else{
+                            DialogProvider.createNoDataAlertDialog(
+                                requireContext(),
+                                positiveAction = { getInitialData() }
+                            )
                         }
                     }
                     else -> { /** NOP **/ }
@@ -180,6 +189,22 @@ class DashboardFragment : Fragment() {
                 }
             }
         }
+
+        // observe ui events
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.networkChecker.networkState.collect{ state ->
+                binding.offlineInformationCardView.visibility = if(state == NetworkState.NotConnected){
+                    View.VISIBLE
+                }else{
+                    View.GONE
+                }
+            }
+        }
+    }
+
+    private fun getInitialData(){
+        // fetch initial breed data
+        viewModel.getBreedList()
     }
 
     private fun breedSectionAnimation(show: Boolean){
@@ -204,6 +229,18 @@ class DashboardFragment : Fragment() {
             )
             duration = 500
             interpolator = AccelerateDecelerateInterpolator()
+            doOnEnd {
+                if(!show){
+                    binding.subBreedContainerView.visibility = View.GONE
+                    binding.subBreedRecyclerList.visibility = View.GONE
+                }
+            }
+            doOnStart {
+                if(show){
+                    binding.subBreedContainerView.visibility = View.VISIBLE
+                    binding.subBreedRecyclerList.visibility = View.VISIBLE
+                }
+            }
         }.start()
     }
 

@@ -12,7 +12,7 @@ import javax.inject.Inject
 class BaseRepository @Inject constructor(
     private val networkChecker: NetworkChecker
 ) {
-    /** Service generic network checker **/
+    /** Network Service Generic Repository Layer **/
 
     // CallService generify for JSON Responses
     suspend fun <T> callServiceAsFlow(

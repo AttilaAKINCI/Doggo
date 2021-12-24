@@ -8,6 +8,7 @@ import com.akinci.doggoapp.common.helper.state.ListState
 import com.akinci.doggoapp.common.helper.state.UIState
 import com.akinci.doggoapp.data.local.dao.ContentDao
 import com.akinci.doggoapp.data.local.entity.ContentEntity
+import com.akinci.doggoapp.data.mapper.convertToDoggoContentListEntity
 import com.akinci.doggoapp.data.repository.DoggoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -37,9 +38,9 @@ class DetailViewModel @Inject constructor(
         Timber.d("DetailViewModel created..")
     }
 
-    fun getContent(breed: String, subBreed: String = "") {
+    fun getDoggoContent(breed: String, subBreed: String = "") {
         viewModelScope.launch(coroutineContext.IO) {
-            doggoRepository.getContent(breed = breed, subBreed = subBreed).collect { networkResponse ->
+            doggoRepository.getDoggoContent(breed = breed, subBreed = subBreed).collect { networkResponse ->
                 when(networkResponse){
                     is NetworkResponse.Loading -> { _breedImageListData.emit(ListState.OnLoading) }
                     is NetworkResponse.Error -> { _uiState.emit(UIState.OnServiceError) }
@@ -47,9 +48,8 @@ class DetailViewModel @Inject constructor(
                         delay(3000L) // in order to simulate network delay. show shimmer
 
                         networkResponse.data?.message?.also {
-                            contentDao.insertContent(
-                                contentList = it.map { item -> ContentEntity(breed = breed, subBreed = subBreed, contentURL = item) }
-                            )
+                            // saves fetched data to room db
+                            contentDao.insertContent(contentList = it.convertToDoggoContentListEntity(breed = breed, subBreed = subBreed))
                         }.apply {
                             _breedImageListData.emit(ListState.OnData(this))
                         }
