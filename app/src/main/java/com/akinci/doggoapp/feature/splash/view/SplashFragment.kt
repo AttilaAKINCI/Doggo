@@ -19,8 +19,7 @@ import timber.log.Timber
 class SplashFragment : Fragment() {
 
     lateinit var binding: FragmentSplashBinding
-   // private val animationTime = 5000L
-    private val animationTime = 100L
+    private val animationTime = 5000L
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
