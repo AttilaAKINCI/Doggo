@@ -39,6 +39,23 @@ src="https://user-images.githubusercontent.com/21987335/147372568-1bd36a51-f24e-
 * Junit5
 * Thruth (assertions)
 
+#### UI Flow
+1- User starts the app with Splash Screen and doggo animation is started.
+
+2- After animation end user navigated to Dashboard Screen automatically
+
+3- Dashboard screen contains welcome section, offline state info sevtion, breed selection list, sub breed selection list and continue button it leads user to Detail Screen
+
+4- If internet connectivity state is changed, offline info section automatically becomes visible or gone
+
+5- When internet connection is lost, data is fetched from ROOM database for offline usage with the data which is fetched until at the moment.
+
+6- Continue button is activated/deactivated according to selected breed and sub breeds
+
+7- Detail screen opens with shimmer (loading animation). When real data is fetched, doggo images are displayed. Each row contains doggo image and random dog name tag.
+
+8- Detail screen can be show network alert dialog if data couldn't be found.
+
 #### ScreenShots
 <img src="https://github.com/AttilaAKINCI/DoggoApp/blob/master/images/1.png" width="200">   <img
 src="https://github.com/AttilaAKINCI/DoggoApp/blob/master/images/2.png" width="200">   <img
