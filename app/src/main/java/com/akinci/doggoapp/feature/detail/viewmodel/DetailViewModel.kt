@@ -38,9 +38,9 @@ class DetailViewModel @Inject constructor(
         Timber.d("DetailViewModel created..")
     }
 
-    fun getDoggoContent(breed: String, subBreed: String = "") {
+    fun getDoggoContent(breed: String, subBreed: String = "", count: Int = (10..30).random()) {
         viewModelScope.launch(coroutineContext.IO) {
-            doggoRepository.getDoggoContent(breed = breed, subBreed = subBreed).collect { networkResponse ->
+            doggoRepository.getDoggoContent(breed = breed, subBreed = subBreed, count = count).collect { networkResponse ->
                 when(networkResponse){
                     is NetworkResponse.Loading -> { _breedImageListData.emit(ListState.OnLoading) }
                     is NetworkResponse.Error -> { _uiState.emit(UIState.OnServiceError) }

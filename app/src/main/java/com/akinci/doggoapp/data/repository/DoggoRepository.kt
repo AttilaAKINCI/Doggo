@@ -46,7 +46,7 @@ class DoggoRepository @Inject constructor(
             flow{ emit(NetworkResponse.Success(data = subBreedDao.getAllSubBreeds(breed).convertToSubBreedListResponse())) }
         }
 
-    suspend fun getDoggoContent(breed: String, subBreed: String = "", count: Int = (10..30).random()): Flow<NetworkResponse<BreedResponse>> =
+    suspend fun getDoggoContent(breed: String, subBreed: String = "", count: Int): Flow<NetworkResponse<BreedResponse>> =
         if(networkChecker.networkState.value == NetworkState.Connected) {
             baseRepository.callServiceAsFlow {
                 if(subBreed.isNotBlank()){
