@@ -36,6 +36,7 @@ src="https://user-images.githubusercontent.com/21987335/147372568-1bd36a51-f24e-
 * Single Activity multiple Fragments approach
 * Unit testing samples & HILT integrations for testing
 * MockK library for unit testing
+* Turbine
 * Junit5
 * Thruth (assertions)
 
