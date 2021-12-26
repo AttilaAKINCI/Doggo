@@ -54,22 +54,8 @@ class DashboardFragment : Fragment() {
         //hide appbar on splash screen
         (activity as AppCompatActivity).supportActionBar?.show()
 
-        /** view transition configuration **/
-        val enterTransitionSet = TransitionSet()
-        enterTransitionSet.addTransition(TransitionInflater.from(context).inflateTransition(android.R.transition.move))
-        enterTransitionSet.duration = 1000
-        sharedElementEnterTransition = enterTransitionSet
-
-        val enterFade = Fade()
-        enterFade.startDelay = 1000
-        enterFade.duration = 300
-        enterTransition = enterFade
-
-        val exitFade = Fade()
-        exitFade.startDelay = 0
-        exitFade.duration = 300
-        exitTransition = exitFade
-        /** **/
+        // shared element transitions
+        handleSharedElementTransitionAnimation()
 
         // set tile background
         val backgroundDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.pattern)
@@ -250,6 +236,14 @@ class DashboardFragment : Fragment() {
             duration = 300
             interpolator = AccelerateDecelerateInterpolator()
         }.start()
+    }
+
+    private fun handleSharedElementTransitionAnimation(){
+        /** view transition configuration **/
+        val enterTransitionSet = TransitionSet()
+        enterTransitionSet.addTransition(TransitionInflater.from(context).inflateTransition(android.R.transition.move))
+        enterTransitionSet.duration = 1000
+        sharedElementEnterTransition = enterTransitionSet
     }
 
 }
