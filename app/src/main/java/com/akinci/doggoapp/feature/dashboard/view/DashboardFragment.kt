@@ -169,7 +169,7 @@ class DashboardFragment : Fragment() {
             viewModel.uiState.collect{ state ->
                 when(state){
                     is UIState.OnServiceError -> {
-                        SnackBar.make(binding.root, resources.getString(R.string.global_service_error))
+                        SnackBar.make(binding.root, resources.getString(R.string.global_service_error)).show()
                     }
                     else -> { /** NOP **/ }
                 }
