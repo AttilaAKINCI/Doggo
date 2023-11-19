@@ -1,5 +1,5 @@
-# DoggoApp
-Doggo App provides a inspection on dog specie images according to their breeds and sub-breeds
+# DoggoApp -> Deprecated legacy branch, discontinued support.
+Doggo App provides a inspection on dog specie images according to their breeds and sub-breeds. **Renewed Compose version** is in master Branch
 
 ## Brief Description
 Doggo app consist of 2 different fragments and 1 root activity. Activity holds a container layout in order to manage fragments which will be controlled by navigation component.
