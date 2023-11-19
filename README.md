@@ -1,4 +1,4 @@
-# DoggoApp -> Deprecated legacy branch, discontinued support.
+# DoggoApp -> Discontinued support on legacy branch(deprecated), Checkout ***master***
 Doggo App provides a inspection on dog specie images according to their breeds and sub-breeds. **Renewed Compose version** is in master Branch
 
 ## Brief Description
