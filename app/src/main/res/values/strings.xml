@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">DoggoAppCompose</string>
+    <string name="app_name">Doggo</string>
+
+    <!-- TODO check usage. -->
 
     <string name="splash_page">Splash Page</string>
     <string name="dashboard_page">Dashboard Page</string>

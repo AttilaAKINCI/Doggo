@@ -1,8 +1,11 @@
-# DoggoApp-Compose
-DoggoApp-Compose provides a inspection on dogs according to their breeds and sub-breeds 
+# Doggo
+Doggo provides a inspection on dogs according to their breeds and sub-breeds 
+
+
+App base URL: https://dog.ceo/
 
 ## Brief Description
-DoggoApp-Compose is a similar repository to [DoggoApp](https://github.com/AttilaAKINCI/DoggoApp) that wraps UI development part with Jetpack Compose!! 
+Doggo is a similar repository to [Doggo](https://github.com/AttilaAKINCI/DoggoApp) that wraps UI development part with Jetpack Compose!! 
 
 [APK Link (https://drive.google.com/file/d/1VWNpmRe8YC3-50uTNY_HtpUL2N3SriRd/view?usp=sharing)](https://drive.google.com/file/d/1VWNpmRe8YC3-50uTNY_HtpUL2N3SriRd/view?usp=sharing)
 
@@ -48,13 +51,13 @@ src="https://user-images.githubusercontent.com/21987335/147821026-9a780384-d1a4-
 5- App need to be connected to network so if network is un avaiable, user informs with a dialog
 
 #### ScreenShots
-<img src="https://github.com/AttilaAKINCI/DoggoApp-Compose/blob/master/images/1.png" width="200">   <img
-src="https://github.com/AttilaAKINCI/DoggoApp-Compose/blob/master/images/2-1.png" width="200">   <img
-src="https://github.com/AttilaAKINCI/DoggoApp-Compose/blob/master/images/3-1.png" width="200">   <img                                                                             
-src="https://github.com/AttilaAKINCI/DoggoApp-Compose/blob/master/images/4-1.png" width="200">   <img                                                                             
-src="https://github.com/AttilaAKINCI/DoggoApp-Compose/blob/master/images/5-1.png" width="200">   <img                                                                             
-src="https://github.com/AttilaAKINCI/DoggoApp-Compose/blob/master/images/6-1.png" width="200"> <img 
-src="https://github.com/AttilaAKINCI/DoggoApp-Compose/blob/master/images/7.png" width="200"> 
+<img src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/1.png" width="200">   <img
+src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/2-1.png" width="200">   <img
+src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/3-1.png" width="200">   <img                                                                             
+src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/4-1.png" width="200">   <img                                                                             
+src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/5-1.png" width="200">   <img                                                                             
+src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/6-1.png" width="200"> <img 
+src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/7.png" width="200"> 
                                                                                         
 
 # License
