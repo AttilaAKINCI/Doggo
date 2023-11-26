@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.akinci.doggo.core.compose.reduce
 import com.akinci.doggo.core.coroutine.ContextProvider
+import com.akinci.doggo.core.utils.capitalise
 import com.akinci.doggo.data.subbreed.SubBreedRepository
 import com.akinci.doggo.domain.breed.BreedUseCase
 import com.akinci.doggo.ui.features.dashboard.DashboardViewContract.State
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -52,7 +54,7 @@ class DashboardViewModel @Inject constructor(
                         isNoData = false,
                         isError = false,
                         breedList = response
-                            .map { it.name }
+                            .map { it.name.capitalise() }
                             .toPersistentList(),
                     )
                 }
