@@ -5,6 +5,6 @@ import com.akinci.doggo.core.compose.UIState
 object SplashViewContract {
 
     data class State(
-        val isCompleted: Boolean
+        val isCompleted: Boolean = false
     ): UIState
 }

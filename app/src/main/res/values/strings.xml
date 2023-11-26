@@ -17,7 +17,7 @@
 
     <!--  Dashboard Fragment   -->
     <string name="title_dashboard">Which breed is your favorite?</string>
-    <string name="dashboard_welcome_info_text">Welcome to Doggo :) You can select a breed and a sub breed in order to take a look at lovely doggos </string>
+    <string name="dashboard_welcome_info_text">Welcome to Doggo  😇\nYou can select a breed and a sub breed to take a look at lovely doggos </string>
     <string name="choose_breed_msg">Please choose a breed &amp; sub-breed first</string>
     <string name="breed_list_title">BREEDS</string>
     <string name="sub_breed_list_title">SUB BREEDS</string>

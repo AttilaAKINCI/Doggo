@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.akinci.doggo.core.storage.AppDatabaseKeys.DB_TABLE_SUB_BREED
-import com.akinci.doggo.domain.data.SubBreed
+import com.akinci.doggo.domain.subBreed.SubBreed
 
 @Entity(
     tableName = DB_TABLE_SUB_BREED,

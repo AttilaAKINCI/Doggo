@@ -1,35 +1,58 @@
 package com.akinci.doggo.ui.features.dashboard
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.akinci.doggo.R
 import com.akinci.doggo.core.compose.UIModePreviews
+import com.akinci.doggo.ui.ds.components.InfiniteLottieAnimation
+import com.akinci.doggo.ui.ds.components.Shimmer
+import com.akinci.doggo.ui.ds.components.StaggeredGrid
 import com.akinci.doggo.ui.ds.components.TiledBackground
 import com.akinci.doggo.ui.ds.theme.DoggoTheme
+import com.akinci.doggo.ui.ds.theme.bodyLargeBold
+import com.akinci.doggo.ui.ds.theme.oval
 import com.akinci.doggo.ui.features.dashboard.DashboardViewContract.State
+import com.akinci.doggo.ui.features.destinations.DetailScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.collections.immutable.PersistentList
+import kotlin.random.Random
 
 @RootNavGraph
 @Destination
@@ -42,10 +65,21 @@ fun DashboardScreen(
 
     DashboardScreenContent(
         uiState = uiState,
-        onBreedSelected = { },
-        onSubBreedSelected = { },
+        onBreedSelected = {
+            // validate next button visibility for each selection.
+        },
+        onSubBreedSelected = {
+            // validate next button visibility for each selection.
+        },
         onDetailButtonClick = {
-            //      navigator.navigate()
+            if (uiState.selectedBreed != null) {
+                navigator.navigate(
+                    DetailScreenDestination(
+                        breed = uiState.selectedBreed!!,
+                        subBreed = uiState.selectedSubBreed,
+                    )
+                )
+            }
         },
     )
 
@@ -73,85 +107,154 @@ private fun DashboardScreenContent(
     onDetailButtonClick: () -> Unit,
 ) {
     Surface {
-        TiledBackground(
-            painter = painterResource(id = R.drawable.ic_pattern_bg),
-        ) {
+        TiledBackground(painter = painterResource(id = R.drawable.ic_pattern_bg)) {
             Column(
                 modifier = Modifier
                     .windowInsetsPadding(WindowInsets.systemBars)
                     .fillMaxSize()
             ) {
-                /*Row(
-                    modifier = Modifier
-                        .padding(20.dp, 20.dp, 20.dp, 10.dp)
-                        .height(100.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .border(
-                            BorderStroke(1.dp, colorResource(R.color.card_border)),
-                            RoundedCornerShape(10.dp)
-                        )
-                        .background(color = colorResource(R.color.teal_200_90)),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                DashboardScreen.TopBar()
 
-                    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.doggo))
-                    LottieAnimation(
-                        composition,
-                        modifier = Modifier
-                            .width(100.dp)
-                            .height(100.dp),
-                        iterations = animationCount
-                    )
+                DashboardScreen.Title(title = stringResource(id = R.string.breed_list_title))
 
-                    Text(
-                        text = stringResource(R.string.dashboard_welcome_info_text),
-                        modifier = Modifier.padding(0.dp, 0.dp, 5.dp, 0.dp),
-                        style = MaterialTheme.typography.body1
-                    )
-                }*/
-
-                // Breed List
                 if (uiState.breedList.isNotEmpty()) {
-                    Text(
-                        text = stringResource(R.string.breed_list_title)
-                    )
-
+                    DashboardScreen.ListSection(items = uiState.breedList)
                 }
 
+                if (uiState.selectedBreed != null) {
+                    DashboardScreen.Title(title = stringResource(id = R.string.sub_breed_list_title))
 
-                /* BreedSelector(
-                     content = vm.breedListState,
-                     headerTitle = stringResource(R.string.breed_list_title),
-                     isVisible = vm.breedListState.isNotEmpty(),
-                     onItemSelected = { breedName -> vm.selectBreed(breedName) }
-                 )
+                    if (uiState.subBreedList.isNotEmpty()) {
+                        DashboardScreen.ListSection(items = uiState.breedList)
+                    }
+                }
 
-                 */
-                /** BREED Container **//*
-                BreedSelector(
-                    content = vm.subBreedListState,
-                    headerTitle = stringResource(R.string.sub_breed_list_title),
-                    isVisible = vm.subBreedListState.isNotEmpty(),
-                    onItemSelected = { breedName -> vm.selectSubBreed(breedName) },
-                    rowCount = 1
-                )*/
+                if (uiState.isShimmerLoading) {
+                    DashboardScreen.ShimmerLoading()
+                }
             }
 
-            FloatingActionButton(
+            if (uiState.isDetailButtonActive) {
+                FloatingActionButton(
+                    modifier = Modifier
+                        .align(alignment = Alignment.BottomEnd)
+                        .padding(end = 30.dp, bottom = 50.dp)
+                        .testTag("floatingButton"),
+                    shape = MaterialTheme.shapes.oval,
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    onClick = onDetailButtonClick,
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowForward,
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+        }
+    }
+}
+
+typealias DashboardScreen = Unit
+
+@Composable
+private fun DashboardScreen.TopBar() {
+    Card(
+        modifier = Modifier.padding(16.dp),
+        shape = MaterialTheme.shapes.medium,
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            InfiniteLottieAnimation(
+                modifier = Modifier.size(100.dp),
+                animationId = R.raw.doggo
+            )
+
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = stringResource(R.string.dashboard_welcome_info_text),
+                style = MaterialTheme.typography.bodyLargeBold
+            )
+        }
+    }
+}
+
+@Composable
+private fun DashboardScreen.Title(
+    title: String,
+) {
+    Card(
+        modifier = Modifier.padding(16.dp),
+        shape = MaterialTheme.shapes.medium,
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    ) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp),
+            text = title,
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Composable
+private fun DashboardScreen.ShimmerLoading() {
+    StaggeredGrid(
+        modifier = Modifier.horizontalScroll(rememberScrollState()),
+        rows = 4
+    ) {
+        (1..40).toList().forEach { _ ->
+            Shimmer(
                 modifier = Modifier
-                    .align(alignment = Alignment.BottomEnd)
-                    .padding(0.dp, 0.dp, 30.dp, 50.dp)
-                    .testTag("floatingButton"),
-                onClick = onDetailButtonClick,
+                    .padding(vertical = 5.dp)
+                    .padding(start = 8.dp, end = 8.dp)
+                    .height(48.dp)
+                    .width(Random.nextInt(100, 150).dp)
+                    .clip(MaterialTheme.shapes.oval)
+            )
+        }
+    }
+}
+
+@Composable
+private fun DashboardScreen.ListSection(
+    items: PersistentList<String>,
+) {
+    StaggeredGrid(
+        modifier = Modifier.horizontalScroll(rememberScrollState()),
+        rows = 4
+    ) {
+        items.forEach {
+            Box(
+                modifier = Modifier
+                    .padding(vertical = 5.dp)
+                    .padding(start = 8.dp, end = 8.dp)
+                    .height(48.dp)
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        shape = MaterialTheme.shapes.oval
+                    )
+                    .clip(MaterialTheme.shapes.oval)
+                    .background(color = MaterialTheme.colorScheme.secondary),
+                contentAlignment = Alignment.Center,
             ) {
-                Icon(
-                    imageVector = Icons.Filled.KeyboardArrowRight,
-                    contentDescription = "",
+                Text(
+                    modifier = Modifier.padding(horizontal = 24.dp),
+                    text = it
                 )
             }
         }
     }
 }
+
 
 @UIModePreviews
 @Composable

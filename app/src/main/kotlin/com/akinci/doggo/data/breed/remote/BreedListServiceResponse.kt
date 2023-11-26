@@ -1,6 +1,6 @@
 package com.akinci.doggo.data.breed.remote
 
-import com.akinci.doggo.domain.data.Breed
+import com.akinci.doggo.domain.breed.Breed
 import kotlinx.serialization.Serializable
 
 @Serializable

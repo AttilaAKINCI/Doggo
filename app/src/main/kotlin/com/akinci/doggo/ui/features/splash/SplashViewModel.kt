@@ -2,6 +2,7 @@ package com.akinci.doggo.ui.features.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.akinci.doggo.core.compose.reduce
 import com.akinci.doggo.ui.features.splash.SplashViewContract.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -11,21 +12,23 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SplashViewModel @Inject constructor(
+class SplashViewModel @Inject constructor() : ViewModel() {
 
-) : ViewModel() {
-
-    private val _stateFlow: MutableStateFlow<State> = MutableStateFlow(
-        State(isCompleted = false)
-    )
+    private val _stateFlow: MutableStateFlow<State> = MutableStateFlow(State())
     val stateFlow = _stateFlow.asStateFlow()
 
     init {
+        simulateInitialization()
+    }
+
+    private fun simulateInitialization() {
         viewModelScope.launch {
-            // Simulate app initialization period
             delay(3000)
 
-            _stateFlow.value = State(isCompleted = true)
+            // complete Splash lottie animation
+            _stateFlow.reduce {
+                copy(isCompleted = true)
+            }
         }
     }
 }

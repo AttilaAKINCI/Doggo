@@ -1,6 +1,5 @@
-# Doggo
-Doggo provides a inspection on dogs according to their breeds and sub-breeds 
-
+# Doggo - Under Refactoring 
+Doggo provides a inspection on dogs according to their breeds and sub-breeds
 
 App base URL: https://dog.ceo/
 

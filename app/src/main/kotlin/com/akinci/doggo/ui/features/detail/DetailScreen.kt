@@ -3,17 +3,25 @@ package com.akinci.doggo.ui.features.detail
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.akinci.doggo.R
 import com.akinci.doggo.core.compose.UIModePreviews
+import com.akinci.doggo.ui.ds.components.TiledBackground
 import com.akinci.doggo.ui.ds.theme.DoggoTheme
+import com.akinci.doggo.ui.features.detail.DetailViewContract.ScreenArgs
 import com.akinci.doggo.ui.features.detail.DetailViewContract.State
+import com.akinci.doggo.ui.navigation.animation.SlideInOutHorizontally
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @RootNavGraph
-@Destination
+@Destination(
+    style = SlideInOutHorizontally::class,
+    navArgsDelegate = ScreenArgs::class
+)
 @Composable
 fun DetailScreen(
     navigator: DestinationsNavigator,
@@ -34,6 +42,13 @@ private fun DetailScreenContent(
     uiState: State,
 ) {
     Surface {
+        TiledBackground(
+            painter = painterResource(id = R.drawable.ic_pattern_bg),
+        ) {
+
+        }
+
+
         /* TiledBackground(
              modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
              tiledDrawableId = R.drawable.ic_pattern_bg

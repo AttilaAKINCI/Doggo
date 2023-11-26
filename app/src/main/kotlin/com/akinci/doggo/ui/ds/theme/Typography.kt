@@ -5,16 +5,17 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.W700
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.sp
 import com.akinci.doggo.R
 
-private val Bangers = FontFamily(
-    Font(R.font.bangers_regular),
+private val Roboto = FontFamily(
+    Font(R.font.roboto_regular),
 )
 
 val textStyle = TextStyle(
-    fontFamily = Bangers,
+    fontFamily = Roboto,
     lineHeightStyle = LineHeightStyle(
         alignment = LineHeightStyle.Alignment.Center,
         trim = LineHeightStyle.Trim.None,
@@ -113,3 +114,6 @@ val AppTypography = Typography(
         fontWeight = FontWeight.W400,
     ),
 )
+
+val Typography.bodyLargeBold: TextStyle
+    get() = AppTypography.bodyLarge.copy(fontWeight = W700)

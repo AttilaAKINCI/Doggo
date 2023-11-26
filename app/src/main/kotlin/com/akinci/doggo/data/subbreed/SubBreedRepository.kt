@@ -6,7 +6,7 @@ import com.akinci.doggo.data.subbreed.local.SubBreedEntity
 import com.akinci.doggo.data.subbreed.local.toDomain
 import com.akinci.doggo.data.subbreed.remote.SubBreedListServiceResponse
 import com.akinci.doggo.data.subbreed.remote.toDomain
-import com.akinci.doggo.domain.data.toEntity
+import com.akinci.doggo.domain.subBreed.toEntity
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import javax.inject.Inject

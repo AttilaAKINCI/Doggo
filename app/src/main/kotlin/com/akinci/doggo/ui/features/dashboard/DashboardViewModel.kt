@@ -1,25 +1,99 @@
 package com.akinci.doggo.ui.features.dashboard
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.akinci.doggo.core.compose.reduce
 import com.akinci.doggo.core.coroutine.ContextProvider
-import com.akinci.doggo.data.breed.BreedRepository
 import com.akinci.doggo.data.subbreed.SubBreedRepository
+import com.akinci.doggo.domain.breed.BreedUseCase
 import com.akinci.doggo.ui.features.dashboard.DashboardViewContract.State
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val contextProvider: ContextProvider,
-    private val breedRepository: BreedRepository,
+    private val breedUseCase: BreedUseCase,
     private val subBreedRepository: SubBreedRepository,
 ) : ViewModel() {
 
     private val _stateFlow: MutableStateFlow<State> = MutableStateFlow(State())
     val stateFlow = _stateFlow.asStateFlow()
 
+    init {
+        fetchBreeds()
+    }
+
+    private fun fetchBreeds() {
+        viewModelScope.launch {
+            // switch ui to shimmer loading mode
+            _stateFlow.reduce {
+                copy(
+                    isShimmerLoading = true,
+                    isNoData = false,
+                    isError = false,
+                )
+            }
+
+            val response = withContext(contextProvider.io) {
+                breedUseCase.getBreeds()
+            }
+
+            if (response.isNotEmpty()) {
+                // we don't have breed to show, no data
+                _stateFlow.reduce {
+                    copy(
+                        isShimmerLoading = false,
+                        isNoData = false,
+                        isError = false,
+                        breedList = response
+                            .map { it.name }
+                            .toPersistentList(),
+                    )
+                }
+            } else {
+                // we don't have breed to show, no data
+                _stateFlow.reduce {
+                    copy(
+                        isShimmerLoading = false,
+                        isNoData = true,
+                        isError = false,
+                    )
+                }
+            }
+        }
+    }
+
+    private fun fetchSubBreeds() {
+
+    }
+
+    fun selectBreed(name: String) {
+        _stateFlow.reduce {
+            copy(
+                selectedBreed = name,
+                selectedSubBreed = null,
+            )
+        }
+
+        // fetchSubBreed should return flag to set isDetailButtonActive if there is no subBreed
+        fetchSubBreeds()
+    }
+
+    fun selectSubBreed(name: String) {
+        _stateFlow.reduce {
+            copy(
+                selectedSubBreed = name,
+                isDetailButtonActive = true,
+            )
+        }
+
+    }
 
     /*var selectedBreedName: String = ""
     var selectedSubBreedName: String = ""

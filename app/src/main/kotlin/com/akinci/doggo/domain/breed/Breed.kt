@@ -1,4 +1,4 @@
-package com.akinci.doggo.domain.data
+package com.akinci.doggo.domain.breed
 
 import android.os.Parcelable
 import com.akinci.doggo.data.breed.local.BreedEntity

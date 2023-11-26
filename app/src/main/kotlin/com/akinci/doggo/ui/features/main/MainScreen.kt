@@ -1,6 +1,5 @@
 package com.akinci.doggo.ui.features.main
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController

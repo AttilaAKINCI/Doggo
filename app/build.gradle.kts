@@ -92,7 +92,7 @@ dependencies {
     val ktorVersion = "2.3.6"
     val roomVersion = "2.6.0"
     val coilVersion = "2.5.0"
-    val lottieVersion = "6.1.0"
+    val lottieVersion = "6.2.0"
 
     // CORE
     implementation("androidx.core:core-ktx:1.12.0")
