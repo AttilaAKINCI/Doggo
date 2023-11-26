@@ -7,15 +7,15 @@ import javax.inject.Inject
 class BreedUseCase @Inject constructor(
     private val breedRepository: BreedRepository,
 ) {
-    suspend fun getBreeds() = breedRepository.getBreeds().fold(
-        onSuccess = {
+    suspend fun getBreeds() = breedRepository.getBreeds()
+        .onSuccess {
             // save fetched breeds to local db.
             breedRepository.insert(it.toEntity())
-            it
-        },
-        onFailure = {
-            // we encountered an service error. Fallback to local data we have.
-            breedRepository.getLocalBreeds().toDomain()
-        }
-    )
+        }.fold(
+            onSuccess = { it },
+            onFailure = {
+                // we encountered an service error. Fallback to local data we have.
+                breedRepository.getLocalBreeds().toDomain()
+            }
+        )
 }

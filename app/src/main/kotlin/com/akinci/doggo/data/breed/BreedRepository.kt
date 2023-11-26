@@ -20,7 +20,8 @@ class BreedRepository @Inject constructor(
         breedDao.insertBreeds(items)
     }
 
-    suspend fun getLocalBreeds() = breedDao.getAllBreeds()
+    suspend fun getLocalBreeds() =
+        runCatching { breedDao.getAllBreeds() }.getOrDefault(listOf())
     // endregion
 
     // region REMOTE
