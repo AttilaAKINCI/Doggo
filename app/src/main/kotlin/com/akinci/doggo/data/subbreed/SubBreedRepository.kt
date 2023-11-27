@@ -20,8 +20,9 @@ class SubBreedRepository @Inject constructor(
         subBreedDao.insertSubBreeds(items)
     }
 
-    suspend fun getLocalSubBreeds(breed: String) =
-        runCatching { subBreedDao.getAllSubBreeds(breed = breed) }.getOrDefault(listOf())
+    suspend fun getLocalSubBreeds(breed: String) = runCatching {
+        subBreedDao.getAllSubBreeds(breed = breed)
+    }
     // endregion
 
     // region REMOTE
@@ -29,7 +30,6 @@ class SubBreedRepository @Inject constructor(
         httpClient
             .get("api/breed/$breed/list")
             .toResponse<SubBreedListServiceResponse>()
-            .map { it.toDomain(breed = breed) }
             .getOrThrow()
     }
     // endregion

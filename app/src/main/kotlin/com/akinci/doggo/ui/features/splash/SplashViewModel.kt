@@ -18,14 +18,15 @@ class SplashViewModel @Inject constructor() : ViewModel() {
     val stateFlow = _stateFlow.asStateFlow()
 
     init {
-        simulateInitialization()
+        initialize()
     }
 
-    private fun simulateInitialization() {
+    private fun initialize() {
         viewModelScope.launch {
+            // simulate initialization with delay
             delay(3000)
 
-            // complete Splash lottie animation
+            // complete initial animation, proceed dashboard.
             _stateFlow.reduce {
                 copy(isCompleted = true)
             }

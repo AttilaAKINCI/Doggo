@@ -1,7 +1,13 @@
 package com.akinci.doggo.ui.features.dashboard
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -105,34 +113,42 @@ private fun DashboardScreenContent(
             Column(
                 modifier = Modifier
                     .windowInsetsPadding(WindowInsets.systemBars)
-                    .fillMaxSize()
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 DashboardScreen.TopBar()
 
                 DashboardScreen.Title(title = stringResource(id = R.string.breed_list_title))
 
-                if (uiState.breedList.isNotEmpty()) {
-                    DashboardScreen.ListSection(
+                if (uiState.isLoading) {
+                    DashboardScreen.Loading()
+                }
+
+                AnimatedVisibility(
+                    visible = uiState.breedList.isNotEmpty(),
+                    enter = fadeIn(animationSpec = tween(250)),
+                ) {
+                    DashboardScreen.StaggeredGrid(
                         items = uiState.breedList,
                         onSelect = { onBreedSelected(it) },
                         rowCount = 4,
                     )
                 }
 
-                if (uiState.selectedBreed != null) {
-                    DashboardScreen.Title(title = stringResource(id = R.string.sub_breed_list_title))
+                AnimatedVisibility(
+                    visible = uiState.subBreedList.isNotEmpty(),
+                    enter = fadeIn(animationSpec = tween(250)),
+                    exit = fadeOut(animationSpec = tween(250)),
+                ) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        DashboardScreen.Title(title = stringResource(id = R.string.sub_breed_list_title))
 
-                    if (uiState.subBreedList.isNotEmpty()) {
-                        DashboardScreen.ListSection(
+                        DashboardScreen.StaggeredGrid(
                             items = uiState.subBreedList,
                             onSelect = { onSubBreedSelected(it) },
                             rowCount = 1,
                         )
                     }
-                }
-
-                if (uiState.isShimmerLoading) {
-                    DashboardScreen.ShimmerLoading()
                 }
             }
 
@@ -185,6 +201,23 @@ private fun DashboardScreen.TopBar() {
 }
 
 @Composable
+private fun DashboardScreen.Loading() {
+    Box(
+        modifier = Modifier
+            .size(96.dp)
+            .clip(MaterialTheme.shapes.oval)
+            .background(color = MaterialTheme.colorScheme.surfaceVariant),
+        contentAlignment = Alignment.Center,
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(48.dp),
+            strokeWidth = 5.dp,
+            color = MaterialTheme.colorScheme.onPrimary,
+        )
+    }
+}
+
+@Composable
 private fun DashboardScreen.Title(
     title: String,
 ) {
@@ -207,26 +240,7 @@ private fun DashboardScreen.Title(
 }
 
 @Composable
-private fun DashboardScreen.ShimmerLoading() {
-    /* StaggeredGrid(
-         modifier = Modifier.horizontalScroll(rememberScrollState()),
-         rows = 4
-     ) {
-         (1..40).toList().forEach { _ ->
-             Shimmer(
-                 modifier = Modifier
-                     .padding(vertical = 5.dp)
-                     .padding(start = 8.dp, end = 8.dp)
-                     .height(48.dp)
-                     .width(Random.nextInt(100, 150).dp)
-                     .clip(MaterialTheme.shapes.oval)
-             )
-         }
-     }*/
-}
-
-@Composable
-private fun DashboardScreen.ListSection(
+private fun DashboardScreen.StaggeredGrid(
     items: PersistentList<BreedListItem>,
     onSelect: (String) -> Unit,
     rowCount: Int,

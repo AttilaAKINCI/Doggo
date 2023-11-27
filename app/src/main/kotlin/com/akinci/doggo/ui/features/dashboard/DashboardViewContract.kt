@@ -9,8 +9,7 @@ object DashboardViewContract {
 
     data class State(
         val isNoData: Boolean = false,
-        val isShimmerLoading: Boolean = false,
-        val shimmerItemCount: Int = 1,
+        val isLoading: Boolean = false,
         val isDetailButtonActive: Boolean = false,
 
         val breedList: PersistentList<BreedListItem> = persistentListOf(),
