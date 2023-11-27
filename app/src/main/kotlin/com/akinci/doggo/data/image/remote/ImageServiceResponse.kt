@@ -1,5 +1,6 @@
 package com.akinci.doggo.data.image.remote
 
+import com.akinci.doggo.data.image.local.ImageEntity
 import com.akinci.doggo.domain.data.Image
 import kotlinx.serialization.Serializable
 
@@ -8,11 +9,16 @@ data class ImageServiceResponse(
     val message: List<String>
 )
 
-fun ImageServiceResponse.toDomain(
-    breed: String,
-    subBreed: String?,
-) = message.map { url ->
+fun ImageServiceResponse.toDomain(breed: String, subBreed: String?) = message.map { url ->
     Image(
+        breed = breed,
+        subBreed = subBreed,
+        imageUrl = url,
+    )
+}
+
+fun ImageServiceResponse.toEntity(breed: String, subBreed: String?) = message.map { url ->
+    ImageEntity(
         breed = breed,
         subBreed = subBreed,
         imageUrl = url,

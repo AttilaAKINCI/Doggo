@@ -1,85 +1,80 @@
 package com.akinci.doggo.ui.features.detail
 
+import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.akinci.doggo.core.compose.reduce
 import com.akinci.doggo.core.coroutine.ContextProvider
-import com.akinci.doggo.data.image.ImageRepository
-import com.akinci.doggo.ui.features.detail.DetailViewContract.State
+import com.akinci.doggo.domain.DogNameProvider
+import com.akinci.doggo.domain.data.ImagesUseCase
+import com.akinci.doggo.domain.data.toList
 import com.akinci.doggo.ui.features.detail.DetailViewContract.ScreenArgs
+import com.akinci.doggo.ui.features.detail.DetailViewContract.State
+import com.akinci.doggo.ui.features.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val contextProvider: ContextProvider,
-    private val imageRepository: ImageRepository,
+    private val dogNameProvider: DogNameProvider,
+    private val imagesUseCase: ImagesUseCase,
 ) : ViewModel() {
 
-    val screenArgs by lazy { "" }
+    private val screenArgs by lazy { savedStateHandle.navArgs<ScreenArgs>() }
 
-    private val _stateFlow: MutableStateFlow<State> = MutableStateFlow(State())
+    private val _stateFlow: MutableStateFlow<State> = MutableStateFlow(
+        State(
+            title = buildString {
+                append(screenArgs.breed)
+                screenArgs.subBreed?.let {
+                    append("/${screenArgs.breed}")
+                }
+            },
+            isLoading = true,
+        )
+    )
     val stateFlow = _stateFlow.asStateFlow()
 
-    /*  // pass data to composable ui via states
-      var breedImageListState by mutableStateOf(listOf<Content>())
-          private set
-
-      private val fragmentArgBreed by lazy { savedStateHandle.get("breed") ?: "" }
-      private val fragmentArgSubBreed by lazy { savedStateHandle.get("subBreed") ?: "" }
-
-      */
-    /** Network warning popup should seen once **//*
-    var isNetworkWarningDialogVisible by mutableStateOf(true)
-        private set
-
-    var informer by mutableStateOf<UIState>(UIState.None)
-        private set
-
-    fun networkWarningSeen(){
-        isNetworkWarningDialogVisible = false
-    }
-
     init {
-        Timber.d("DetailViewModel created..")
-
-        getDoggoContent(fragmentArgBreed, fragmentArgSubBreed, count = 15)
+        fetchContent()
     }
 
-    fun getDoggoContent(breed: String, subBreed: String = "", count :Int) {
-        viewModelScope.launch(coroutineContext.IO) {
-            doggoRepository.getDoggoContent(breed = breed, subBreed = subBreed, count = count).collect { networkResponse ->
-                when(networkResponse){
-                    is NetworkResponse.Loading -> {
-                        Timber.d("DetailViewModel:: Doggo content list loading..")
-                        withContext(this@DetailViewModel.coroutineContext.Main) { informer = UIState.OnLoading }
-                    }
-                    is NetworkResponse.Error -> {
-                        Timber.d("DetailViewModel:: Doggo content service error..")
-                        withContext(this@DetailViewModel.coroutineContext.Main) { informer = UIState.OnServiceError }
-                    }
-                    is NetworkResponse.Success -> {
-                        networkResponse.data?.message?.let {
-                            Timber.d("DetailViewModel:: Doggo content fetched..")
-                            // saves fetched data to room db
-                            Timber.d("DetailViewModel:: Doggo content is written to ROOM DB")
-                            contentDao.insertImage(contentList = it.convertToDoggoContentListEntity(breed = breed, subBreed = subBreed))
+    private fun fetchContent() {
+        viewModelScope.launch {
 
-                            Timber.d("DetailViewModel:: Doggo content is send as a state to UI")
-                            breedImageListState = it.map { imageUrl ->
-                                Content(
-                                    imageUrl = imageUrl,
-                                    dogName = DogNameProvider.getRandomName()
-                                )
-                            }
-                        }
+            // simulate network delay to show proper loading
+            delay(1000L)
+
+            withContext(contextProvider.io) {
+                imagesUseCase.getImage(
+                    breed = screenArgs.breed.lowercase(),
+                    subBreed = screenArgs.subBreed?.lowercase(),
+                )
+            }.onSuccess { list ->
+                if (list.isNotEmpty()) {
+                    _stateFlow.reduce {
+                        copy(
+                            isLoading = false,
+                            images = list.map {
+                                it.toList(dogNameProvider.getRandomDogName())
+                            }.toPersistentList()
+                        )
                     }
+                } else {
+                    // todo empty list
                 }
+            }.onFailure {
+                // todo fix here
             }
         }
     }
-*/
-
 }

@@ -44,7 +44,7 @@ class DashboardViewModel @Inject constructor(
                 )
             }
 
-            // to have a proper loading switch
+            // simulate network delay to show proper loading
             delay(1000L)
 
             withContext(contextProvider.io) {

@@ -1,7 +1,7 @@
 package com.akinci.doggo.domain.data
 
 import android.os.Parcelable
-import com.akinci.doggo.data.image.local.ImageEntity
+import com.akinci.doggo.domain.ImageListItem
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -11,10 +11,7 @@ data class Image(
     val imageUrl: String
 ) : Parcelable
 
-private fun Image.toEntity() = ImageEntity(
-    breed = breed,
-    subBreed = subBreed,
+fun Image.toList(name: String) = ImageListItem(
+    dogName = name,
     imageUrl = imageUrl,
 )
-
-fun List<Image>.toEntity() = map { it.toEntity() }

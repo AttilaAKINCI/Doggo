@@ -41,7 +41,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -201,24 +200,7 @@ private fun DashboardScreen.TopBar() {
 }
 
 @Composable
-private fun DashboardScreen.Loading() {
-    Box(
-        modifier = Modifier
-            .size(96.dp)
-            .clip(MaterialTheme.shapes.oval)
-            .background(color = MaterialTheme.colorScheme.surfaceVariant),
-        contentAlignment = Alignment.Center,
-    ) {
-        CircularProgressIndicator(
-            modifier = Modifier.size(48.dp),
-            strokeWidth = 5.dp,
-            color = MaterialTheme.colorScheme.onPrimary,
-        )
-    }
-}
-
-@Composable
-private fun DashboardScreen.Title(
+fun DashboardScreen.Title(
     title: String,
 ) {
     Card(
@@ -234,7 +216,24 @@ private fun DashboardScreen.Title(
                 .fillMaxWidth()
                 .padding(vertical = 12.dp),
             text = title,
-            textAlign = TextAlign.Center,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        )
+    }
+}
+
+@Composable
+private fun DashboardScreen.Loading() {
+    Box(
+        modifier = Modifier
+            .size(96.dp)
+            .clip(MaterialTheme.shapes.oval)
+            .background(color = MaterialTheme.colorScheme.surfaceVariant),
+        contentAlignment = Alignment.Center,
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(48.dp),
+            strokeWidth = 5.dp,
+            color = MaterialTheme.colorScheme.onPrimary,
         )
     }
 }
