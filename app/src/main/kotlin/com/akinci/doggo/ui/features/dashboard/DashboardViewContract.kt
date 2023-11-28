@@ -1,7 +1,6 @@
 package com.akinci.doggo.ui.features.dashboard
 
 import com.akinci.doggo.core.compose.UIState
-import com.akinci.doggo.domain.BreedListItem
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 

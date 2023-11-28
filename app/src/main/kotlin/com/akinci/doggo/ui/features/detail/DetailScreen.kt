@@ -40,7 +40,6 @@ import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.akinci.doggo.R
 import com.akinci.doggo.core.compose.UIModePreviews
-import com.akinci.doggo.domain.ImageListItem
 import com.akinci.doggo.ui.ds.components.Shimmer
 import com.akinci.doggo.ui.ds.components.TiledBackground
 import com.akinci.doggo.ui.ds.theme.DoggoTheme

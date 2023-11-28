@@ -2,7 +2,6 @@ package com.akinci.doggo.ui.features.detail
 
 import android.os.Parcelable
 import com.akinci.doggo.core.compose.UIState
-import com.akinci.doggo.domain.ImageListItem
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.parcelize.Parcelize

@@ -1,4 +1,4 @@
-package com.akinci.doggo.domain
+package com.akinci.doggo.ui.features.dashboard
 
 data class BreedListItem(
     val name: String,
