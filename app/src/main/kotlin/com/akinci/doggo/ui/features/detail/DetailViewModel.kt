@@ -35,7 +35,6 @@ class DetailViewModel @Inject constructor(
                     append("/${screenArgs.breed}")
                 }
             },
-            isLoading = true,
         )
     )
     val stateFlow = _stateFlow.asStateFlow()
@@ -64,10 +63,22 @@ class DetailViewModel @Inject constructor(
                         )
                     }
                 } else {
-                    // todo empty list
+                    _stateFlow.reduce {
+                        copy(
+                            isLoading = false,
+                            isNoData = true,
+                            isError = false,
+                        )
+                    }
                 }
             }.onFailure {
-                // todo fix here
+                _stateFlow.reduce {
+                    copy(
+                        isLoading = false,
+                        isNoData = false,
+                        isError = true,
+                    )
+                }
             }
         }
     }

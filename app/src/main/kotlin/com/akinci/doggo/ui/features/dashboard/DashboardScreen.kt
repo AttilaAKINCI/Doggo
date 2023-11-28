@@ -237,7 +237,7 @@ private fun DashboardScreen.ConnectionIssue() {
 }
 
 @Composable
-fun DashboardScreen.Title(
+private fun DashboardScreen.Title(
     title: String,
 ) {
     Card(
@@ -322,7 +322,7 @@ private fun DashboardScreen.StaggeredGrid(
 
 @UIModePreviews
 @Composable
-fun DashboardScreenPreview() {
+private fun DashboardScreenPreview() {
     DoggoTheme {
         DashboardScreenContent(
             uiState = State(),

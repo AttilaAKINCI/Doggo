@@ -10,7 +10,9 @@ import kotlinx.parcelize.Parcelize
 object DetailViewContract {
 
     data class State(
-        val isLoading: Boolean = false,
+        val isLoading: Boolean = true,
+        val isNoData: Boolean = false,
+        val isError: Boolean = false,
 
         val title: String,
         val images: PersistentList<Image> = persistentListOf(),

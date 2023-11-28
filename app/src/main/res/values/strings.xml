@@ -1,10 +1,17 @@
 <resources>
     <string name="app_name">Doggo</string>
 
-    <!--  Dashboard Fragment   -->
+    <!-- Dashboard Screen -->
     <string name="dashboard_screen_welcome_info">Welcome to Doggo  😇\nYou can select a breed and a sub breed to take a look at lovely doggos </string>
     <string name="dashboard_screen_connection_problem">OFFLINE MODE: We have detect that you haven\'t got proper internet connection. Only locally saved data will be shown</string>
     <string name="dashboard_screen_breed_title">BREEDS</string>
     <string name="dashboard_screen_sub_breed_title">SUB BREEDS</string>
+
+    <!--  Detail Screen   -->
+    <string name="detail_screen_go_back">Return to List</string>
+    <string name="detail_screen_no_data_title">Information</string>
+    <string name="detail_screen_no_data_message">There is not any images for this breed</string>
+    <string name="detail_screen_error_title">Something went wrong</string>
+    <string name="detail_screen_error_message">We could not find any doggo images for you this time 🥲 Please try again later</string>
 
 </resources>
