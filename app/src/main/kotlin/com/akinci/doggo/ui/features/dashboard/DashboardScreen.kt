@@ -127,8 +127,10 @@ private fun DashboardScreenContent(
 
                 DashboardScreen.Title(title = stringResource(id = R.string.dashboard_screen_breed_title))
 
-                if (uiState.isLoading) {
-                    DashboardScreen.Loading()
+                when {
+                    uiState.isBreedLoading -> DashboardScreen.BreedLoading()
+                    uiState.isBreedNoData -> DashboardScreen.BreedNoData()
+                    uiState.isBreedError -> DashboardScreen.BreedError()
                 }
 
                 AnimatedVisibility(
@@ -140,6 +142,10 @@ private fun DashboardScreenContent(
                         onSelect = { onBreedSelected(it) },
                         rowCount = 4,
                     )
+                }
+
+                if (uiState.isSubBreedError) {
+                    DashboardScreen.SubBreedError()
                 }
 
                 AnimatedVisibility(
@@ -259,7 +265,7 @@ private fun DashboardScreen.Title(
 }
 
 @Composable
-private fun DashboardScreen.Loading() {
+private fun DashboardScreen.BreedLoading() {
     Box(
         modifier = Modifier
             .size(96.dp)
@@ -271,6 +277,54 @@ private fun DashboardScreen.Loading() {
             modifier = Modifier.size(48.dp),
             strokeWidth = 5.dp,
             color = MaterialTheme.colorScheme.onPrimary,
+        )
+    }
+}
+
+@Composable
+private fun DashboardScreen.BreedError() = DashboardScreen.Info(
+    title = stringResource(id = R.string.general_error_title),
+    message = stringResource(id = R.string.dashboard_screen_error_breed_message),
+)
+
+@Composable
+private fun DashboardScreen.SubBreedError() = DashboardScreen.Info(
+    title = stringResource(id = R.string.general_error_title),
+    message = stringResource(id = R.string.dashboard_screen_error_sub_breed_message),
+)
+
+@Composable
+private fun DashboardScreen.BreedNoData() = DashboardScreen.Info(
+    title = stringResource(id = R.string.general_info_title),
+    message = stringResource(id = R.string.dashboard_screen_no_data_breed_message),
+)
+
+@Composable
+private fun DashboardScreen.Info(
+    title: String,
+    message: String,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .clip(shape = MaterialTheme.shapes.extraLarge)
+            .background(color = MaterialTheme.colorScheme.secondary)
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(16.dp)
+                .padding(top = 16.dp),
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+        )
+
+        Text(
+            modifier = Modifier
+                .padding(16.dp)
+                .padding(bottom = 16.dp),
+            text = message,
+            style = MaterialTheme.typography.bodyLarge,
         )
     }
 }

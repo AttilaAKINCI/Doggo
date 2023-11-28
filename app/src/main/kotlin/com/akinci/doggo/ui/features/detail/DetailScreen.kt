@@ -201,7 +201,7 @@ private fun DetailScreen.Info(
 private fun DetailScreen.Error(
     action: () -> Unit
 ) = DetailScreen.Info(
-    title = stringResource(id = R.string.detail_screen_error_title),
+    title = stringResource(id = R.string.general_error_title),
     message = stringResource(id = R.string.detail_screen_error_message),
     actionText = stringResource(id = R.string.detail_screen_go_back),
     action = action,
@@ -211,7 +211,7 @@ private fun DetailScreen.Error(
 private fun DetailScreen.NoData(
     action: () -> Unit
 ) = DetailScreen.Info(
-    title = stringResource(id = R.string.detail_screen_no_data_title),
+    title = stringResource(id = R.string.general_info_title),
     message = stringResource(id = R.string.detail_screen_no_data_message),
     actionText = stringResource(id = R.string.detail_screen_go_back),
     action = action,

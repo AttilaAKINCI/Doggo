@@ -50,8 +50,9 @@ class DashboardViewModel @Inject constructor(
             // switch ui to shimmer loading mode for breeds
             _stateFlow.reduce {
                 copy(
-                    isLoading = true,
-                    isNoData = false,
+                    isBreedLoading = true,
+                    isBreedNoData = false,
+                    isBreedError = false,
                 )
             }
 
@@ -65,8 +66,9 @@ class DashboardViewModel @Inject constructor(
                     // we have breeds to show
                     _stateFlow.reduce {
                         copy(
-                            isLoading = false,
-                            isNoData = false,
+                            isBreedLoading = false,
+                            isBreedNoData = false,
+                            isBreedError = false,
                             breedList = list
                                 .toListItem()
                                 .map {
@@ -78,13 +80,21 @@ class DashboardViewModel @Inject constructor(
                     // we don't have breed to show, no data
                     _stateFlow.reduce {
                         copy(
-                            isLoading = false,
-                            isNoData = true,
+                            isBreedLoading = false,
+                            isBreedNoData = true,
+                            isBreedError = false,
                         )
                     }
                 }
             }.onFailure {
-                // todo fix here.
+                // encountered an internal error while fetching breeds
+                _stateFlow.reduce {
+                    copy(
+                        isBreedLoading = false,
+                        isBreedNoData = false,
+                        isBreedError = true,
+                    )
+                }
             }
         }
     }
@@ -102,6 +112,7 @@ class DashboardViewModel @Inject constructor(
                     _stateFlow.reduce {
                         copy(
                             isDetailButtonActive = false,
+                            isSubBreedError = false,
                             selectedSubBreed = null,
                             subBreedList = list
                                 .toListItem()
@@ -115,13 +126,22 @@ class DashboardViewModel @Inject constructor(
                     _stateFlow.reduce {
                         copy(
                             isDetailButtonActive = true,
+                            isSubBreedError = false,
                             selectedSubBreed = null,
                             subBreedList = persistentListOf(),
                         )
                     }
                 }
             }.onFailure {
-                // todo fix here
+                // encountered an internal error while fetching sub breeds
+                _stateFlow.reduce {
+                    copy(
+                        isDetailButtonActive = false,
+                        isSubBreedError = true,
+                        selectedSubBreed = null,
+                        subBreedList = persistentListOf(),
+                    )
+                }
             }
         }
     }

@@ -7,10 +7,12 @@ import kotlinx.collections.immutable.persistentListOf
 object DashboardViewContract {
 
     data class State(
-        val isNoData: Boolean = false,
-        val isLoading: Boolean = false,
-        val isConnected:Boolean = true,
+        val isConnected: Boolean = true,
         val isDetailButtonActive: Boolean = false,
+        val isBreedLoading: Boolean = false,
+        val isBreedNoData: Boolean = false,
+        val isBreedError: Boolean = false,
+        val isSubBreedError: Boolean = false,
 
         val breedList: PersistentList<BreedListItem> = persistentListOf(),
         val subBreedList: PersistentList<BreedListItem> = persistentListOf(),
