@@ -162,17 +162,12 @@ dependencies {
 
    /* TODO check below dependencies.
    //TEST RELATED
-    def junit_5_version = "5.7.1"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_5_version}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_5_version}"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:${junit_5_version}"
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2'
     testImplementation 'com.google.truth:truth:1.0.1'
-    testImplementation "io.mockk:mockk:1.10.6"
     testImplementation "androidx.room:room-testing:$room_version"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:1.0.5"
     kaptTest "com.google.dagger:hilt-android-compiler:$hilt_version"
     testAnnotationProcessor "com.google.dagger:hilt-android-compiler:$hilt_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:1.0.5"
+
 
     androidTestImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
