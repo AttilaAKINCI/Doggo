@@ -1,41 +1,10 @@
 <resources>
     <string name="app_name">Doggo</string>
 
-    <!-- TODO check usage. -->
-
-    <string name="splash_page">Splash Page</string>
-    <string name="dashboard_page">Dashboard Page</string>
-    <string name="detail_page">Detail Page</string>
-
-    <string name="image_view_content_desc">Image View Content Description</string>
-    <string name="button_content_desc">Button Content Description</string>
-    <string name="generic_error_msg">Unexpected Error....</string>
-    <string name="list_loading_msg">List loading....</string>
-
-    <string name="cd_back">Back</string>
-
-
     <!--  Dashboard Fragment   -->
-    <string name="title_dashboard">Which breed is your favorite?</string>
-    <string name="dashboard_welcome_info_text">Welcome to Doggo  😇\nYou can select a breed and a sub breed to take a look at lovely doggos </string>
-    <string name="choose_breed_msg">Please choose a breed &amp; sub-breed first</string>
-    <string name="breed_list_title">BREEDS</string>
-    <string name="sub_breed_list_title">SUB BREEDS</string>
-
-    <!--  Detail Fragment   -->
-    <string name="title_detail">Doggos</string>
-    <string name="detail_title_long">%1$s / %2$s</string>
-    <string name="detail_title_short">%1$s</string>
-
-    <!-- COMPONENTS -->
-    <!-- Offline Dialog -->
-    <string name="connection_error_title">OFFLINE MODE</string>
-    <string name="connection_error_message">We have detect that you haven\'t got proper internet connection. Only locally saved data will be shown </string>
-    <string name="ok_label">OK</string>
-
-    <!-- Page Navigator -->
-    <string name="welcome_message">....Welcome....</string>
-    <string name="button_next_page">Navigate to Next Page</string>
-    <string name="button_prev_page">Navigate to Previous Page</string>
+    <string name="dashboard_screen_welcome_info">Welcome to Doggo  😇\nYou can select a breed and a sub breed to take a look at lovely doggos </string>
+    <string name="dashboard_screen_connection_problem">OFFLINE MODE: We have detect that you haven\'t got proper internet connection. Only locally saved data will be shown</string>
+    <string name="dashboard_screen_breed_title">BREEDS</string>
+    <string name="dashboard_screen_sub_breed_title">SUB BREEDS</string>
 
 </resources>
