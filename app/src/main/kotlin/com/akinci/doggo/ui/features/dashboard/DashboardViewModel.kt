@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.akinci.doggo.core.compose.reduce
 import com.akinci.doggo.core.coroutine.ContextProvider
+import com.akinci.doggo.core.network.NetworkChecker
 import com.akinci.doggo.core.utils.capitalise
 import com.akinci.doggo.domain.breed.BreedUseCase
 import com.akinci.doggo.domain.breed.toListItem
@@ -16,6 +17,8 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -25,6 +28,7 @@ class DashboardViewModel @Inject constructor(
     private val contextProvider: ContextProvider,
     private val breedUseCase: BreedUseCase,
     private val subBreedUseCase: SubBreedUseCase,
+    private val networkChecker: NetworkChecker,
 ) : ViewModel() {
 
     private val _stateFlow: MutableStateFlow<State> = MutableStateFlow(State())
@@ -32,6 +36,13 @@ class DashboardViewModel @Inject constructor(
 
     init {
         fetchBreeds()
+        subscribeToNetworkStatus()
+    }
+
+    private fun subscribeToNetworkStatus() {
+        networkChecker.state
+            .onEach { _stateFlow.reduce { copy(isConnected = it) } }
+            .launchIn(viewModelScope)
     }
 
     private fun fetchBreeds() {

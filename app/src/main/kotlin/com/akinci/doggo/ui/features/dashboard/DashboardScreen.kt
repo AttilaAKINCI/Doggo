@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +25,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -117,7 +119,15 @@ private fun DashboardScreenContent(
             ) {
                 DashboardScreen.TopBar()
 
-                DashboardScreen.Title(title = stringResource(id = R.string.breed_list_title))
+                AnimatedVisibility(
+                    visible = !uiState.isConnected,
+                    enter = fadeIn(animationSpec = tween(250)),
+                    exit = fadeOut(animationSpec = tween(250)),
+                ) {
+                    DashboardScreen.ConnectionIssue()
+                }
+
+                DashboardScreen.Title(title = stringResource(id = R.string.dashboard_screen_breed_title))
 
                 if (uiState.isLoading) {
                     DashboardScreen.Loading()
@@ -140,7 +150,7 @@ private fun DashboardScreenContent(
                     exit = fadeOut(animationSpec = tween(250)),
                 ) {
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        DashboardScreen.Title(title = stringResource(id = R.string.sub_breed_list_title))
+                        DashboardScreen.Title(title = stringResource(id = R.string.dashboard_screen_sub_breed_title))
 
                         DashboardScreen.StaggeredGrid(
                             items = uiState.subBreedList,
@@ -192,8 +202,37 @@ private fun DashboardScreen.TopBar() {
 
             Text(
                 modifier = Modifier.padding(16.dp),
-                text = stringResource(R.string.dashboard_welcome_info_text),
+                text = stringResource(R.string.dashboard_screen_welcome_info),
                 style = MaterialTheme.typography.bodyLargeBold
+            )
+        }
+    }
+}
+
+@Composable
+private fun DashboardScreen.ConnectionIssue() {
+    Card(
+        modifier = Modifier.padding(16.dp),
+        shape = MaterialTheme.shapes.medium,
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                modifier = Modifier.padding(16.dp),
+                imageVector = Icons.Default.Warning,
+                contentDescription = null,
+            )
+
+            Text(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(vertical = 8.dp)
+                    .padding(end = 16.dp),
+                text = stringResource(id = R.string.dashboard_screen_connection_problem),
+                style = MaterialTheme.typography.bodyLarge
             )
         }
     }
