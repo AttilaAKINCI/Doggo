@@ -1,14 +1,11 @@
 package com.akinci.doggo.ui.features.detail
 
-import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.akinci.doggo.core.compose.reduce
 import com.akinci.doggo.core.coroutine.ContextProvider
-import com.akinci.doggo.domain.DogNameProvider
 import com.akinci.doggo.domain.data.ImagesUseCase
-import com.akinci.doggo.domain.data.toList
 import com.akinci.doggo.ui.features.detail.DetailViewContract.ScreenArgs
 import com.akinci.doggo.ui.features.detail.DetailViewContract.State
 import com.akinci.doggo.ui.features.navArgs
@@ -25,7 +22,6 @@ import javax.inject.Inject
 class DetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val contextProvider: ContextProvider,
-    private val dogNameProvider: DogNameProvider,
     private val imagesUseCase: ImagesUseCase,
 ) : ViewModel() {
 
@@ -64,9 +60,7 @@ class DetailViewModel @Inject constructor(
                     _stateFlow.reduce {
                         copy(
                             isLoading = false,
-                            images = list.map {
-                                it.toList(dogNameProvider.getRandomDogName())
-                            }.toPersistentList()
+                            images = list.toPersistentList()
                         )
                     }
                 } else {

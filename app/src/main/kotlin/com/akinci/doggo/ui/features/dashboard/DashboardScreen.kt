@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -48,7 +47,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.akinci.doggo.R
 import com.akinci.doggo.core.compose.UIModePreviews
-import com.akinci.doggo.domain.BreedListItem
 import com.akinci.doggo.ui.ds.components.InfiniteLottieAnimation
 import com.akinci.doggo.ui.ds.components.TiledBackground
 import com.akinci.doggo.ui.ds.theme.DoggoTheme

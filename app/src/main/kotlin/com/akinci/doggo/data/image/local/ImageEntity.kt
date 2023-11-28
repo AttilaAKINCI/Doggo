@@ -17,11 +17,3 @@ data class ImageEntity(
     val subBreed: String?,
     val imageUrl: String,
 )
-
-private fun ImageEntity.toDomain() = Image(
-    breed = breed,
-    subBreed = subBreed,
-    imageUrl = imageUrl
-)
-
-fun List<ImageEntity>.toDomain() = map { it.toDomain() }

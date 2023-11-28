@@ -1,7 +1,7 @@
 package com.akinci.doggo.domain.breed
 
 import android.os.Parcelable
-import com.akinci.doggo.domain.BreedListItem
+import com.akinci.doggo.ui.features.dashboard.BreedListItem
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

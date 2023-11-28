@@ -9,14 +9,6 @@ data class ImageServiceResponse(
     val message: List<String>
 )
 
-fun ImageServiceResponse.toDomain(breed: String, subBreed: String?) = message.map { url ->
-    Image(
-        breed = breed,
-        subBreed = subBreed,
-        imageUrl = url,
-    )
-}
-
 fun ImageServiceResponse.toEntity(breed: String, subBreed: String?) = message.map { url ->
     ImageEntity(
         breed = breed,
