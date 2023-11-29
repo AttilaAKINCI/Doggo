@@ -23,9 +23,13 @@ class HttpEngineFactoryMock : HttpEngineFactory() {
 
             val path = request.url.encodedPath
             val content = when {
-                path.contains("api/breeds/list/all") -> getBreedListContent(statusCode)
-                path.contains("api/breed/") -> getSubBreedListContent(statusCode)
-                path.contains("/images/random/") -> getImageContent(statusCode)
+                path == "/api/breeds/list/all" -> getBreedListContent(statusCode)
+                path.matches(Regex("/api/breed/(.*)/list")) ->
+                    getSubBreedListContent(statusCode)
+
+                path.matches(Regex("/api/breed/(.*)/images/random/(.*)")) ->
+                    getImageContent(statusCode)
+
                 else -> throw IllegalStateException("Unsupported path")
             }
 

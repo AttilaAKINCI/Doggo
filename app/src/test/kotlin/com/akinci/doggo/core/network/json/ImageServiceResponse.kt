@@ -4,7 +4,7 @@ object ImageServiceResponse {
     val success = """
         {
            "message":[
-              "https:\/\/images.dog.ceo\/breeds\/bakharwal-indian\/Bakharwal.jpg"
+              "https:\/\/images.dog.ceo\/breeds\/hound-afghan\/afghan.jpg"
            ],
            "status":"success"
         }
