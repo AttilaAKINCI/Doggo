@@ -2,11 +2,11 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
-    kotlin("plugin.serialization") version "1.9.10"
+    kotlin("plugin.serialization") version "1.9.20"
     id("kotlin-parcelize")
     id("com.google.dagger.hilt.android")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
-    id("de.mannodermaus.android-junit5") version "1.9.3.0"
+    id("de.mannodermaus.android-junit5") version "1.10.0.0"
 }
 
 repositories {
@@ -57,7 +57,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
+        kotlinCompilerExtensionVersion = "1.5.4"
     }
     lint {
         abortOnError = true
@@ -84,7 +84,7 @@ android {
 
 dependencies {
     val lifecycleVersion = "2.6.2"
-    val composeBomVersion = "2023.10.00"
+    val composeBomVersion = "2023.10.01"
     val jUnit5Version = "5.10.1"
     val coroutinesVersion = "1.7.3"
     val hiltVersion = "2.48.1"
@@ -111,6 +111,7 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     implementation("io.ktor:ktor-client-logging:$ktorVersion")
+    implementation("io.ktor:ktor-client-mock:$ktorVersion")
 
     // COROUTINES
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
@@ -158,31 +159,37 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:5.8.0")
     testImplementation("io.mockk:mockk:1.13.8")
     testImplementation("app.cash.turbine:turbine:1.0.0")
-    implementation("io.ktor:ktor-client-mock:$ktorVersion")
+
+    // UI/INSTRUMENTATION TESTING
+    androidTestImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test:rules:1.5.0")
+    androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
+    androidTestImplementation("io.kotest:kotest-assertions-core:5.8.0")
+
+    androidTestImplementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
+
+    androidTestImplementation("com.google.dagger:hilt-android-testing:$hiltVersion")
+    kspAndroidTest("com.google.dagger:hilt-android-compiler:$hiltVersion")
+
 
    /* TODO check below dependencies.
    //TEST RELATED
-    testImplementation 'com.google.truth:truth:1.0.1'
+
     testImplementation "androidx.room:room-testing:$room_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:1.0.5"
     kaptTest "com.google.dagger:hilt-android-compiler:$hilt_version"
     testAnnotationProcessor "com.google.dagger:hilt-android-compiler:$hilt_version"
 
-
-    androidTestImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'android.arch.core:core-testing:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation 'com.google.truth:truth:1.0.1'
-    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2'
-    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"   //hilt integration for testing
-    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"            //hilt integration for testing
-    androidTestAnnotationProcessor "com.google.dagger:hilt-android-compiler:$hilt_version"
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+
     androidTestImplementation "androidx.test:core:1.4.0"
     androidTestImplementation "androidx.test:runner:1.4.0"
-    androidTestImplementation "androidx.test:rules:1.4.0"
+
     androidTestImplementation "androidx.test.ext:junit-ktx:1.1.3"
     androidTestImplementation "com.google.dagger:hilt-android:$hilt_version"
     */

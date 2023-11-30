@@ -2,7 +2,7 @@ package com.akinci.doggo.di
 
 import android.content.Context
 import androidx.room.Room
-import com.akinci.doggo.data.local.DoggoDatabase
+import com.akinci.doggo.core.storage.AppDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,10 +20,10 @@ object TestAppModule {
 
     @Provides
     @TestDB
-    fun provideInMemoryDb(@ApplicationContext context: Context) =
-        Room.inMemoryDatabaseBuilder(
-            context,
-            DoggoDatabase::class.java
-        ).allowMainThreadQueries().build()
-
+    fun provideRoomDB(
+        @ApplicationContext context: Context
+    ) = Room.inMemoryDatabaseBuilder(
+        context,
+        AppDatabase::class.java
+    ).allowMainThreadQueries().build()
 }

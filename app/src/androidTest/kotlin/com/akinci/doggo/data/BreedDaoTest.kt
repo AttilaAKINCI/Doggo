@@ -1,27 +1,27 @@
-package com.akinci.doggo.data.local.dao
+package com.akinci.doggo.data
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.filters.SmallTest
-import com.akinci.doggo.coroutine.TestContextProvider
+import com.akinci.doggo.core.storage.AppDatabase
 import com.akinci.doggo.data.breed.local.BreedDao
-import com.akinci.doggo.data.local.DoggoDatabase
 import com.akinci.doggo.data.breed.local.BreedEntity
 import com.akinci.doggo.di.TestAppModule
-import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltAndroidTest
 @SmallTest
-@ExperimentalCoroutinesApi
-class BreedDaoTest{
+class BreedDaoTest {
 
     @get:Rule
     var hiltRule = HiltAndroidRule(this)
@@ -31,9 +31,8 @@ class BreedDaoTest{
 
     @Inject
     @TestAppModule.TestDB
-    lateinit var db: DoggoDatabase
+    lateinit var db: AppDatabase
 
-    private val coroutineContext = TestContextProvider()
     private lateinit var breedDao: BreedDao
 
     @Before
@@ -48,23 +47,21 @@ class BreedDaoTest{
     }
 
     @Test
-    fun insertBreedAndGetAllBreeds() {
+    fun getAllBreedsFromRoomDB() = runTest {
         val breedList = listOf(
-            BreedEntity(name = "hound", selected = false),
-            BreedEntity(name = "bulldog", selected = true)
+            BreedEntity(name = "hound"),
+            BreedEntity(name = "bulldog")
         )
 
-        runBlockingTest {
-            breedDao.insertBreed(breedList)
-        }
+        breedDao.insertBreeds(breedList)
 
-        val fetchedList = breedDao.getAllBreeds()
+        val result = breedDao.getAllBreeds()
 
-        for (index in fetchedList.indices){
-            assertThat(fetchedList[index].name).isEqualTo(breedList[index].name)
-            assertThat(fetchedList[index].selected).isEqualTo(breedList[index].selected)
-        }
+        result.size shouldBe 2
+        result[0].name shouldBe "hound"
+        result[1].name shouldBe "bulldog"
 
-        coroutineContext.testCoroutineDispatcher.advanceUntilIdle()
+        advanceUntilIdle()
     }
+
 }

@@ -1,12 +1,12 @@
 package com.akinci.doggo.coroutine
 
-import com.akinci.doggo.common.coroutine.CoroutineContextProvider
+import com.akinci.doggo.core.coroutine.ContextProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlin.coroutines.CoroutineContext
 
-@ExperimentalCoroutinesApi
-class TestContextProvider(val testCoroutineDispatcher : TestCoroutineDispatcher = TestCoroutineDispatcher()): CoroutineContextProvider() {
-    override val Main: CoroutineContext = testCoroutineDispatcher
-    override val IO: CoroutineContext = testCoroutineDispatcher
+@OptIn(ExperimentalCoroutinesApi::class)
+class TestContextProvider : ContextProvider {
+    override val main: CoroutineContext = UnconfinedTestDispatcher()
+    override val io: CoroutineContext = UnconfinedTestDispatcher()
 }
