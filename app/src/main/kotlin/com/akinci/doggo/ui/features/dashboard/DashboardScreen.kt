@@ -83,21 +83,6 @@ fun DashboardScreen(
             }
         },
     )
-
-    /*scope.launch {
-        if (vm.validate()) {
-            onNavigateToDetail.invoke(
-                vm.selectedBreedName,
-                vm.selectedSubBreedName
-            )
-        } else {
-            scaffoldState.snackbarHostState.showSnackbar(
-                message = "Please choose a breed & sub-breed first",
-                duration = SnackbarDuration.Short
-            )
-        }
-    }*/
-
 }
 
 @Composable
@@ -198,7 +183,10 @@ private fun DashboardScreen.TopBar() {
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.testTag("welcome_banner"),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             InfiniteLottieAnimation(
                 modifier = Modifier.size(100.dp),
                 animationId = R.raw.doggo

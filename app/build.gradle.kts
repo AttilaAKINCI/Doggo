@@ -66,6 +66,8 @@ android {
         checkReleaseBuilds = false
         baseline = file("lint-baseline.xml")
     }
+
+    @Suppress("UnstableApiUsage")
     testOptions {
         unitTests {
             isReturnDefaultValues = true
@@ -166,31 +168,15 @@ dependencies {
     androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
     androidTestImplementation("io.kotest:kotest-assertions-core:5.8.0")
 
+    // COMPOSE
     androidTestImplementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
+    // COROUTINE
     androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
 
+    // HILT
     androidTestImplementation("com.google.dagger:hilt-android-testing:$hiltVersion")
     kspAndroidTest("com.google.dagger:hilt-android-compiler:$hiltVersion")
-
-
-   /* TODO check below dependencies.
-   //TEST RELATED
-
-    testImplementation "androidx.room:room-testing:$room_version"
-    kaptTest "com.google.dagger:hilt-android-compiler:$hilt_version"
-    testAnnotationProcessor "com.google.dagger:hilt-android-compiler:$hilt_version"
-
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation 'com.google.truth:truth:1.0.1'
-
-    androidTestImplementation "androidx.test:core:1.4.0"
-    androidTestImplementation "androidx.test:runner:1.4.0"
-
-    androidTestImplementation "androidx.test.ext:junit-ktx:1.1.3"
-    androidTestImplementation "com.google.dagger:hilt-android:$hilt_version"
-    */
 }
