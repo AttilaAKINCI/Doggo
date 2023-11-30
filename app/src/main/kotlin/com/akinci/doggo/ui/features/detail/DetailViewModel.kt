@@ -32,7 +32,7 @@ class DetailViewModel @Inject constructor(
             title = buildString {
                 append(screenArgs.breed)
                 screenArgs.subBreed?.let {
-                    append("/${screenArgs.breed}")
+                    append("/${it}")
                 }
             },
         )
@@ -59,6 +59,8 @@ class DetailViewModel @Inject constructor(
                     _stateFlow.reduce {
                         copy(
                             isLoading = false,
+                            isNoData = false,
+                            isError = false,
                             images = list.toPersistentList()
                         )
                     }
