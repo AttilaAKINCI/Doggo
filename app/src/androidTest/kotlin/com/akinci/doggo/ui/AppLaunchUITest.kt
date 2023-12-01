@@ -12,7 +12,7 @@ import org.junit.Rule
 import org.junit.Test
 
 @HiltAndroidTest
-class SplashScreenTest {
+class AppLaunchUITest {
 
     @get:Rule
     var hiltRule = HiltAndroidRule(this)
@@ -21,7 +21,7 @@ class SplashScreenTest {
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     @Test
-    fun check_splash_screen_ui_flow() = runTest {
+    fun checkSplashAnimationDisplayed() = runTest {
         // Check lottie animation is displayed
         composeTestRule.onNodeWithTag("lottie_animation").assertIsDisplayed()
 

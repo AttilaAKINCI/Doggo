@@ -39,7 +39,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -154,8 +153,7 @@ private fun DashboardScreenContent(
                 FloatingActionButton(
                     modifier = Modifier
                         .align(alignment = Alignment.BottomEnd)
-                        .padding(end = 30.dp, bottom = 50.dp)
-                        .testTag("floatingButton"),
+                        .padding(end = 30.dp, bottom = 50.dp),
                     shape = MaterialTheme.shapes.oval,
                     containerColor = MaterialTheme.colorScheme.primary,
                     onClick = onDetailButtonClick,
@@ -183,10 +181,7 @@ private fun DashboardScreen.TopBar() {
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     ) {
-        Row(
-            modifier = Modifier.testTag("welcome_banner"),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             InfiniteLottieAnimation(
                 modifier = Modifier.size(100.dp),
                 animationId = R.raw.doggo
