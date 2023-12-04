@@ -42,7 +42,7 @@ src="https://github.com/AttilaAKINCI/Doggo/assets/21987335/51128919-6960-43f0-b4
 * [Turbine](https://github.com/cashapp/turbine)
 * [MockK](https://mockk.io/)
 * Unit testing
-* Instrumentation testing
+* Instrumentation & Compose UI testing
 * Junit5
 
 #### UI Flow
