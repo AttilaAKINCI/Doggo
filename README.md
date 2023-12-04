@@ -13,8 +13,8 @@ Doggo is a similar repository to [Doggo](https://github.com/AttilaAKINCI/DoggoAp
        OfflineMode Run               Normal Run               Validation Error
 
 <img src="https://user-images.githubusercontent.com/21987335/147820989-637b0058-f770-45c0-b870-c9f7105f4a46.gif" width="200"/> <img 
-src="https://user-images.githubusercontent.com/21987335/147821007-ec61cef4-4181-4f6d-94de-62aa9b152060.gif" width="200"/>  <img 
-src="https://user-images.githubusercontent.com/21987335/147821026-9a780384-d1a4-4f85-8ea5-0ef0adc3c6a5.gif" width="200"/>
+src="https://user-images.githubusercontent.com/21987335/147821007-ec61cef4-4181-4f6d-94de-62aa9b152060.gif" width="200"/>  
+
 
 
 ## 3rd party lib. usages & Tech Specs
@@ -50,14 +50,25 @@ src="https://user-images.githubusercontent.com/21987335/147821026-9a780384-d1a4-
 5- App need to be connected to network so if network is un avaiable, user informs with a dialog
 
 #### ScreenShots
-<img src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/1.png" width="200">   <img
-src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/2-1.png" width="200">   <img
-src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/3-1.png" width="200">   <img                                                                             
-src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/4-1.png" width="200">   <img                                                                             
-src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/5-1.png" width="200">   <img                                                                             
-src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/6-1.png" width="200"> <img 
-src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/7.png" width="200"> 
-                                                                                        
+Light Mode:
+
+<img src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/1-light.png" width="110">   <img
+src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/2-light.png" width="110">   <img
+src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/3-light.png" width="110">   <img                                                                             
+src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/4-light.png" width="110">   <img                                                                             
+src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/5-light.png" width="110">   <img                                                                             
+src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/6-light.png" width="110">   <img 
+src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/7-light.png" width="110"> 
+
+Dark Mode:
+
+<img src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/1-dark.png" width="110">   <img
+src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/2-dark.png" width="110">   <img
+src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/3-dark.png" width="110">   <img                                                                             
+src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/4-dark.png" width="110">   <img                                                                             
+src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/5-dark.png" width="110">   <img                                                                             
+src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/6-dark.png" width="110">   <img 
+src="https://github.com/AttilaAKINCI/Doggo/blob/master/images/7-dark.png" width="110"> 
 
 # License
 
