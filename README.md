@@ -37,7 +37,6 @@ src="https://github.com/AttilaAKINCI/Doggo/assets/21987335/51128919-6960-43f0-b4
 * [Lottie Animations](https://github.com/airbnb/lottie-android)
 * [Coil](https://github.com/coil-kt/coil)
     - Asynch image loading
-    - Gif play support
 * [Timber Client logging](https://github.com/JakeWharton/timber)
 * [Dependency Injection (HILT)](https://developer.android.com/training/dependency-injection/hilt-android)
 * [Turbine](https://github.com/cashapp/turbine)
