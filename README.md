@@ -1,53 +1,63 @@
 # Doggo - Under Refactoring 
-Doggo provides a inspection on dogs according to their breeds and sub-breeds
+Doggo app provides a inspection on dogs according to their breeds and sub-breeds
 
-App base URL: https://dog.ceo/
+[APK Link (https://drive.google.com/file/d/1mupugSa4wd49kUxyL2qm1ZkH9nuTZXAl/view?usp=sharing)](https://drive.google.com/file/d/1mupugSa4wd49kUxyL2qm1ZkH9nuTZXAl/view?usp=sharing)
 
-## Brief Description
-Doggo is a similar repository to [Doggo](https://github.com/AttilaAKINCI/DoggoApp) that wraps UI development part with Jetpack Compose!! 
-
-[APK Link (https://drive.google.com/file/d/1VWNpmRe8YC3-50uTNY_HtpUL2N3SriRd/view?usp=sharing)](https://drive.google.com/file/d/1VWNpmRe8YC3-50uTNY_HtpUL2N3SriRd/view?usp=sharing)
+## How to run
+In order to run project in your local be aware below points ->
+* Developed by Android Studio Hedgehog | 2023.1.1 RC 3 Build #AI-231.9392.1.2311.11047128, built on Dec 4, 2023
+* Checkout master branch
+* add *SERVICE_ENDPOINT_BASE_URL=https://dog.ceo/* to your local.properties file.
 
 ## App Video
 
-       OfflineMode Run               Normal Run               Validation Error
+       Normal Run             OfflineMode Run   
 
-<img src="https://user-images.githubusercontent.com/21987335/147820989-637b0058-f770-45c0-b870-c9f7105f4a46.gif" width="200"/> <img 
-src="https://user-images.githubusercontent.com/21987335/147821007-ec61cef4-4181-4f6d-94de-62aa9b152060.gif" width="200"/>  
-
-
+<img src="https://github.com/AttilaAKINCI/Doggo/assets/21987335/ebcf9882-1548-4635-979d-d39cc6880a61" width="200"/> <img 
+src="https://github.com/AttilaAKINCI/Doggo/assets/21987335/51128919-6960-43f0-b45d-167d5b09c5d3" width="200"/>  
 
 ## 3rd party lib. usages & Tech Specs
+* Kotlin
+* [Kotlin Coroutines](https://kotlinlang.org/docs/coroutines-overview.html)
+* [Kotlin DSL](https://developer.android.com/build/migrate-to-kotlin-dsl)
 * Patterns
-    - MVVM design pattern
-    - Repository pattern for data management
-* JetPack Libs
-    - Compose
-    - Compose UI testing
-* Retrofit
-* Kotlin & Coroutines
-* Room Database 
-* Coil Image loading
-* Lottie compose animation Lib.
-* Moshi Json handler
-* Timber Client logging
-* Dependency Injection (HILT) 
-* Single Activity multiple Composable approach
-* Unit testing samples & HILT integrations for testing
-* MockK library for unit testing
+    - MVVM
+    - Clean Architecture
+    - Repository
+* [JetPack Compose](https://developer.android.com/jetpack/compose?gclid=Cj0KCQiAjMKqBhCgARIsAPDgWlyVg8bZaasX_bdQfYrAXsuDQ6vD-2SmFcTv34Fb-jLQxgGqPD7UxKgaAso5EALw_wcB&gclsrc=aw.ds)
+* [Edge to Edge UI design](https://developer.android.com/jetpack/compose/layouts/insets)
+* Shimmer Loading
+* Native Splash Screen
+* Dark/Light UI Mode 
+* [Compose Destinations](https://github.com/raamcosta/compose-destinations) / [Documentation](https://composedestinations.rafaelcosta.xyz/)
+* [Room Database](https://developer.android.com/jetpack/androidx/releases/room)
+    - Suspend response handling
+    - Reactive Flow response handling
+* [Ktor Client](https://ktor.io/docs/client-supported-platforms.html)
+* [Lottie Animations](https://github.com/airbnb/lottie-android)
+* [Coil](https://github.com/coil-kt/coil)
+    - Asynch image loading
+    - Gif play support
+* [Timber Client logging](https://github.com/JakeWharton/timber)
+* [Dependency Injection (HILT)](https://developer.android.com/training/dependency-injection/hilt-android)
+* [Turbine](https://github.com/cashapp/turbine)
+* [MockK](https://mockk.io/)
+* Unit testing
+* Instrumentation testing
 * Junit5
-* Thruth (assertions)
 
 #### UI Flow
-1- App starts with splash screen that plays doggo animation with the help of lottie compose library. After animation end, user navigated to dashboard screen
+1- App starts with custom splash screen that plays doggo animation with the help of lottie compose library. After animation end, user navigated to dashboard screen
 
-2- In dashboard screen, user is welcomed by a information and breed/sub breed list. Sub breed list becomes visible when any breed selected (selected breed need to have a subreed)
+2- In dashboard screen, user is welcomed by a information and breed/sub breed list. Sub breed list becomes visible when any breed selected.
 
-3- Pressing continue button, a validation starts and checks your selections. if everything is ok, app navigates to Detail Screen.
+3- Pressing floating action navigates user to Detail Screen.
 
-4- Detail screen loads images for doggos which is selected on Dashboard screen
+4- Detail screen loads images of doggos which is selected(breed/subBreed) on Dashboard screen
 
-5- App need to be connected to network so if network is un avaiable, user informs with a dialog
+5- App need to be connected to network so if network is un available, user informs with a dialog
+
+6- During offline mode app uses previously fetched data until restore network connection again.
 
 #### ScreenShots
 Light Mode:
