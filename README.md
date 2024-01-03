@@ -1,4 +1,4 @@
-# Doggo - Under Refactoring 
+# Doggo
 Doggo app provides a inspection on dogs according to their breeds and sub-breeds
 
 [APK Link (https://drive.google.com/file/d/1mupugSa4wd49kUxyL2qm1ZkH9nuTZXAl/view?usp=sharing)](https://drive.google.com/file/d/1mupugSa4wd49kUxyL2qm1ZkH9nuTZXAl/view?usp=sharing)
