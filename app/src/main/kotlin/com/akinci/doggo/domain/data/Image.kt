@@ -7,6 +7,6 @@ import kotlinx.parcelize.Parcelize
 data class Image(
     val breed: String,
     val subBreed: String?,
-    val dogName: String,
+    val dogName: String = "",
     val imageUrl: String
 ) : Parcelable

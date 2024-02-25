@@ -7,8 +7,8 @@ import com.akinci.doggo.core.coroutine.ContextProvider
 import com.akinci.doggo.core.coroutine.ContextProviderImpl
 import com.akinci.doggo.core.network.HttpClientFactory
 import com.akinci.doggo.core.network.HttpEngineFactory
-import com.akinci.doggo.core.storage.AppDatabase
-import com.akinci.doggo.core.storage.AppDatabaseKeys
+import com.akinci.doggo.data.room.AppDatabase
+import com.akinci.doggo.data.room.AppDatabaseKeys
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,15 +34,4 @@ object AppModule {
         httpEngineFactory,
         appConfig,
     ).create()
-
-    @Provides
-    @Singleton
-    fun provideAppDatabase(
-        @ApplicationContext context: Context
-    ): AppDatabase =
-        Room.databaseBuilder(
-            context.applicationContext,
-            AppDatabase::class.java,
-            AppDatabaseKeys.DB_NAME
-        ).fallbackToDestructiveMigration().build()
 }

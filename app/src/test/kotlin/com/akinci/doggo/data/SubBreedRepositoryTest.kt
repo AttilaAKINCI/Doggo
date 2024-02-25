@@ -3,11 +3,13 @@ package com.akinci.doggo.data
 import com.akinci.doggo.core.application.AppConfig
 import com.akinci.doggo.core.network.HttpClientFactory
 import com.akinci.doggo.core.network.HttpEngineFactoryMock
-import com.akinci.doggo.core.storage.AppDatabase
-import com.akinci.doggo.data.subbreed.SubBreedRepository
-import com.akinci.doggo.data.subbreed.local.SubBreedDao
-import com.akinci.doggo.data.subbreed.local.SubBreedEntity
+import com.akinci.doggo.data.repository.SubBreedRepository
+import com.akinci.doggo.data.room.subbreed.SubBreedDao
+import com.akinci.doggo.data.room.subbreed.SubBreedEntity
+import com.akinci.doggo.domain.data.SubBreed
 import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.result.shouldBeFailure
+import io.kotest.matchers.result.shouldBeSuccess
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpStatusCode
 import io.mockk.coEvery
@@ -18,8 +20,8 @@ import org.junit.jupiter.api.Test
 
 class SubBreedRepositoryTest {
 
-    private val appDatabaseMock: AppDatabase = mockk(relaxed = true)
     private val appConfigMock: AppConfig = mockk(relaxed = true)
+    private val subBreedDaoMock: SubBreedDao = mockk(relaxed = true)
 
     private val httpEngineFactory = HttpEngineFactoryMock()
     private val httpClientFactory = HttpClientFactory(
@@ -28,21 +30,18 @@ class SubBreedRepositoryTest {
     )
 
     private lateinit var testedClass: SubBreedRepository
-    private lateinit var dao: SubBreedDao
 
     @BeforeEach
     fun setup() {
-        dao = appDatabaseMock.getSubBreedDao()
-
         testedClass = SubBreedRepository(
-            appDatabase = appDatabaseMock,
+            subBreedDao = subBreedDaoMock,
             httpClient = httpClientFactory.create()
         )
     }
 
     @Test
     fun `should return success when subBreeds are successfully inserted`() = runTest {
-        coEvery { dao.insertSubBreeds(any()) } returns Unit
+        coEvery { subBreedDaoMock.insertSubBreeds(any()) } returns Unit
 
         val subBreeds = listOf(
             SubBreedEntity(breed = "Hound", name = "Afghan")
@@ -55,7 +54,7 @@ class SubBreedRepositoryTest {
 
     @Test
     fun `should return failure when room db fails on subBreed insert`() = runTest {
-        coEvery { dao.insertSubBreeds(any()) } throws Exception()
+        coEvery { subBreedDaoMock.insertSubBreeds(any()) } throws Exception()
 
         val subBreeds = listOf(
             SubBreedEntity(breed = "Hound", name = "Afghan")
@@ -69,15 +68,14 @@ class SubBreedRepositoryTest {
     @Test
     fun `should return local subBreeds when there is a locally saved subBreeds`() = runTest {
         val breed = "Hound"
-        coEvery { dao.getAllSubBreeds(breed) } returns listOf(
+        coEvery { subBreedDaoMock.getAllSubBreeds(breed) } returns listOf(
             SubBreedEntity(breed = "Hound", name = "Afghan"),
             SubBreedEntity(breed = "Hound", name = "Husky")
         )
 
         val result = testedClass.getLocalSubBreeds(breed = breed)
 
-        result.isSuccess shouldBe true
-        result.getOrNull()!!.let {
+        result shouldBeSuccess {
             it.size shouldBe 2
             it[0].breed shouldBe "Hound"
             it[0].name shouldBe "Afghan"
@@ -90,7 +88,7 @@ class SubBreedRepositoryTest {
     fun `should return failure when exception occurred during subBreed fetch room query`() =
         runTest {
             val breed = "Hound"
-            coEvery { dao.getAllSubBreeds(breed) } throws Exception()
+            coEvery { subBreedDaoMock.getAllSubBreeds(breed) } throws Exception()
 
             val result = testedClass.getLocalSubBreeds(breed)
 
@@ -104,15 +102,14 @@ class SubBreedRepositoryTest {
 
         val result = testedClass.getSubBreeds(breed)
 
-        result.isSuccess shouldBe true
-        result.getOrNull()!!.let {
-            it.message shouldContain "afghan"
-            it.message shouldContain "basset"
-            it.message shouldContain "blood"
-            it.message shouldContain "english"
-            it.message shouldContain "ibizan"
-            it.message shouldContain "plott"
-            it.message shouldContain "walker"
+        result shouldBeSuccess {
+            it shouldContain SubBreed(breed = "Hound", name = "afghan")
+            it shouldContain SubBreed(breed = "Hound", name = "basset")
+            it shouldContain SubBreed(breed = "Hound", name = "blood")
+            it shouldContain SubBreed(breed = "Hound", name = "english")
+            it shouldContain SubBreed(breed = "Hound", name = "ibizan")
+            it shouldContain SubBreed(breed = "Hound", name = "plott")
+            it shouldContain SubBreed(breed = "Hound", name = "walker")
         }
     }
 
@@ -133,8 +130,7 @@ class SubBreedRepositoryTest {
 
         val result = testedClass.getSubBreeds(breed)
 
-        result.isFailure shouldBe true
-        result.exceptionOrNull()!!.let {
+        result shouldBeFailure {
             it.message shouldBe "Simulated Network Exception"
         }
     }

@@ -2,9 +2,9 @@ package com.akinci.doggo.data
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.filters.SmallTest
-import com.akinci.doggo.core.storage.AppDatabase
-import com.akinci.doggo.data.image.local.ImageDao
-import com.akinci.doggo.data.image.local.ImageEntity
+import com.akinci.doggo.data.room.AppDatabase
+import com.akinci.doggo.data.room.image.ImageDao
+import com.akinci.doggo.data.room.image.ImageEntity
 import com.akinci.doggo.di.TestAppModule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest

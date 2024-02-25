@@ -1,10 +1,9 @@
 package com.akinci.doggo.domain
 
 import com.akinci.doggo.core.network.NetworkChecker
-import com.akinci.doggo.data.breed.BreedRepository
-import com.akinci.doggo.data.breed.local.BreedEntity
-import com.akinci.doggo.data.breed.remote.BreedListServiceResponse
-import com.akinci.doggo.domain.breed.BreedUseCase
+import com.akinci.doggo.data.repository.BreedRepository
+import com.akinci.doggo.domain.data.Breed
+import io.kotest.matchers.result.shouldBeSuccess
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -19,27 +18,25 @@ class BreedUseCaseTest {
     private val breedRepositoryMock: BreedRepository = mockk(relaxed = true)
     private val networkCheckerMock: NetworkChecker = mockk(relaxed = true)
 
-    private lateinit var testedClass: BreedUseCase
+    private lateinit var testedClass: GetBreedsUseCase
 
     @BeforeEach
     fun setup() {
         coEvery { breedRepositoryMock.getBreeds() } returns Result.success(
-            BreedListServiceResponse(
-                message = mapOf(
-                    "hound" to listOf("afghan", "husky"),
-                    "bulldog" to listOf("hulk", "bunny")
-                )
+            listOf(
+                Breed(name = "hound"),
+                Breed(name = "bulldog")
             )
         )
 
         coEvery { breedRepositoryMock.getLocalBreeds() } returns Result.success(
             listOf(
-                BreedEntity(name = "kangal"),
-                BreedEntity(name = "pitbull")
+                Breed(name = "kangal"),
+                Breed(name = "pitbull")
             )
         )
 
-        testedClass = BreedUseCase(
+        testedClass = GetBreedsUseCase(
             breedRepository = breedRepositoryMock,
             networkChecker = networkCheckerMock,
         )
@@ -49,10 +46,9 @@ class BreedUseCaseTest {
     fun `should return remote results when connected to network`() = runTest {
         every { networkCheckerMock.isConnected() } returns true
 
-        val result = testedClass.getBreeds()
+        val result = testedClass.execute()
 
-        result.isSuccess shouldBe true
-        result.getOrNull()!!.let {
+        result shouldBeSuccess {
             it.size shouldBe 2
             it[0].name shouldBe "hound"
             it[1].name shouldBe "bulldog"
@@ -66,7 +62,7 @@ class BreedUseCaseTest {
     fun `should save new breeds into local db while fetching from endpoint`() = runTest {
         every { networkCheckerMock.isConnected() } returns true
 
-        testedClass.getBreeds()
+        testedClass.execute()
 
         coVerify(exactly = 1) { breedRepositoryMock.insert(any()) }
     }
@@ -76,7 +72,7 @@ class BreedUseCaseTest {
         every { networkCheckerMock.isConnected() } returns true
         coEvery { breedRepositoryMock.getBreeds() } returns Result.failure(Exception())
 
-        val result = testedClass.getBreeds()
+        val result = testedClass.execute()
 
         result.isFailure shouldBe true
     }
@@ -85,10 +81,9 @@ class BreedUseCaseTest {
     fun `should return local results when not connected to network`() = runTest {
         every { networkCheckerMock.isConnected() } returns false
 
-        val result = testedClass.getBreeds()
+        val result = testedClass.execute()
 
-        result.isSuccess shouldBe true
-        result.getOrNull()!!.let {
+        result shouldBeSuccess {
             it.size shouldBe 2
             it[0].name shouldBe "kangal"
             it[1].name shouldBe "pitbull"
@@ -103,7 +98,7 @@ class BreedUseCaseTest {
         every { networkCheckerMock.isConnected() } returns false
         coEvery { breedRepositoryMock.getLocalBreeds() } returns Result.failure(Exception())
 
-        val result = testedClass.getBreeds()
+        val result = testedClass.execute()
 
         result.isFailure shouldBe true
     }

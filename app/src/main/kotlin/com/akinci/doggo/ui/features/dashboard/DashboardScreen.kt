@@ -23,7 +23,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyHorizontalStaggeredGri
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -41,24 +41,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.akinci.doggo.R
 import com.akinci.doggo.core.compose.UIModePreviews
+import com.akinci.doggo.core.utils.SideEffectCollector
+import com.akinci.doggo.domain.data.Chip
 import com.akinci.doggo.ui.ds.components.InfiniteLottieAnimation
 import com.akinci.doggo.ui.ds.components.TiledBackground
 import com.akinci.doggo.ui.ds.theme.DoggoTheme
 import com.akinci.doggo.ui.ds.theme.bodyLargeBold
 import com.akinci.doggo.ui.ds.theme.oval
+import com.akinci.doggo.ui.features.dashboard.DashboardViewContract.BreedStateType
+import com.akinci.doggo.ui.features.dashboard.DashboardViewContract.Effect
 import com.akinci.doggo.ui.features.dashboard.DashboardViewContract.State
+import com.akinci.doggo.ui.features.dashboard.DashboardViewContract.SubBreedStateType
 import com.akinci.doggo.ui.features.destinations.DetailScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.collections.immutable.PersistentList
 
-@RootNavGraph
 @Destination
 @Composable
 fun DashboardScreen(
@@ -67,20 +71,22 @@ fun DashboardScreen(
 ) {
     val uiState: State by vm.stateFlow.collectAsStateWithLifecycle()
 
+    SideEffectCollector(effect = vm.effect) { effect ->
+        when (effect) {
+            is Effect.NavigateToDetails -> navigator.navigate(
+                DetailScreenDestination(
+                    breed = effect.breed,
+                    subBreed = effect.subBreed,
+                )
+            )
+        }
+    }
+
     DashboardScreenContent(
         uiState = uiState,
         onBreedSelected = { vm.selectBreed(it) },
         onSubBreedSelected = { vm.selectSubBreed(it) },
-        onDetailButtonClick = {
-            if (uiState.selectedBreed != null) {
-                navigator.navigate(
-                    DetailScreenDestination(
-                        breed = uiState.selectedBreed!!,
-                        subBreed = uiState.selectedSubBreed,
-                    )
-                )
-            }
-        },
+        onDetailButtonClick = vm::onDetailButtonClick,
     )
 }
 
@@ -111,41 +117,32 @@ private fun DashboardScreenContent(
 
                 DashboardScreen.Title(title = stringResource(id = R.string.dashboard_screen_breed_title))
 
-                when {
-                    uiState.isBreedLoading -> DashboardScreen.BreedLoading()
-                    uiState.isBreedNoData -> DashboardScreen.BreedNoData()
-                    uiState.isBreedError -> DashboardScreen.BreedError()
-                }
-
-                AnimatedVisibility(
-                    visible = uiState.breedList.isNotEmpty(),
-                    enter = fadeIn(animationSpec = tween(250)),
-                ) {
-                    DashboardScreen.StaggeredGrid(
-                        items = uiState.breedList,
+                when (val type = uiState.breedStateType) {
+                    BreedStateType.Loading -> DashboardScreen.BreedLoading()
+                    BreedStateType.NoData -> DashboardScreen.BreedNoData()
+                    BreedStateType.Error -> DashboardScreen.BreedError()
+                    is BreedStateType.Content -> DashboardScreen.StaggeredGrid(
+                        items = type.breedList,
                         onSelect = { onBreedSelected(it) },
                         rowCount = 4,
                     )
                 }
 
-                if (uiState.isSubBreedError) {
-                    DashboardScreen.SubBreedError()
-                }
+                when (val subType = uiState.subBreedStateType) {
+                    SubBreedStateType.Error -> DashboardScreen.SubBreedError()
+                    is SubBreedStateType.Content -> {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            DashboardScreen.Title(title = stringResource(id = R.string.dashboard_screen_sub_breed_title))
 
-                AnimatedVisibility(
-                    visible = uiState.subBreedList.isNotEmpty(),
-                    enter = fadeIn(animationSpec = tween(250)),
-                    exit = fadeOut(animationSpec = tween(250)),
-                ) {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        DashboardScreen.Title(title = stringResource(id = R.string.dashboard_screen_sub_breed_title))
-
-                        DashboardScreen.StaggeredGrid(
-                            items = uiState.subBreedList,
-                            onSelect = { onSubBreedSelected(it) },
-                            rowCount = 1,
-                        )
+                            DashboardScreen.StaggeredGrid(
+                                items = subType.subBreedList,
+                                onSelect = { onSubBreedSelected(it) },
+                                rowCount = 1,
+                            )
+                        }
                     }
+
+                    else -> Unit
                 }
             }
 
@@ -159,7 +156,7 @@ private fun DashboardScreenContent(
                     onClick = onDetailButtonClick,
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.ArrowForward,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = "",
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
@@ -242,7 +239,7 @@ private fun DashboardScreen.Title(
                 .fillMaxWidth()
                 .padding(vertical = 12.dp),
             text = title,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -314,7 +311,7 @@ private fun DashboardScreen.Info(
 
 @Composable
 private fun DashboardScreen.StaggeredGrid(
-    items: PersistentList<BreedListItem>,
+    items: PersistentList<Chip>,
     onSelect: (String) -> Unit,
     rowCount: Int,
 ) {
@@ -355,7 +352,6 @@ private fun DashboardScreen.StaggeredGrid(
         }
     }
 }
-
 
 @UIModePreviews
 @Composable
