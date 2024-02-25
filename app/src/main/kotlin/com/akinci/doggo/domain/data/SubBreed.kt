@@ -4,9 +4,8 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Image(
+data class SubBreed(
     val breed: String,
-    val subBreed: String?,
-    val dogName: String = "",
-    val imageUrl: String
+    val name: String,
+    val selected: Boolean = false,
 ) : Parcelable

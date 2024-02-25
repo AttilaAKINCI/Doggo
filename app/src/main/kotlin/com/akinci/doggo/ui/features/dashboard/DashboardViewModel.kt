@@ -2,23 +2,27 @@ package com.akinci.doggo.ui.features.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.akinci.doggo.core.compose.reduce
 import com.akinci.doggo.core.coroutine.ContextProvider
 import com.akinci.doggo.core.network.NetworkChecker
 import com.akinci.doggo.core.utils.capitalise
-import com.akinci.doggo.domain.breed.BreedUseCase
-import com.akinci.doggo.domain.breed.toListItem
-import com.akinci.doggo.domain.subBreed.SubBreedUseCase
-import com.akinci.doggo.domain.subBreed.toListItem
+import com.akinci.doggo.domain.GetBreedsUseCase
+import com.akinci.doggo.domain.GetSubBreedsUseCase
+import com.akinci.doggo.domain.data.Chip
+import com.akinci.doggo.ui.features.dashboard.DashboardViewContract.BreedStateType
+import com.akinci.doggo.ui.features.dashboard.DashboardViewContract.Effect
 import com.akinci.doggo.ui.features.dashboard.DashboardViewContract.State
+import com.akinci.doggo.ui.features.dashboard.DashboardViewContract.SubBreedStateType
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -26,13 +30,16 @@ import javax.inject.Inject
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val contextProvider: ContextProvider,
-    private val breedUseCase: BreedUseCase,
-    private val subBreedUseCase: SubBreedUseCase,
+    private val getBreedsUseCase: GetBreedsUseCase,
+    private val getSubBreedsUseCase: GetSubBreedsUseCase,
     private val networkChecker: NetworkChecker,
 ) : ViewModel() {
 
     private val _stateFlow: MutableStateFlow<State> = MutableStateFlow(State())
     val stateFlow = _stateFlow.asStateFlow()
+
+    private val _effect by lazy { Channel<Effect>() }
+    val effect: Flow<Effect> by lazy { _effect.receiveAsFlow() }
 
     init {
         fetchBreeds()
@@ -41,105 +48,87 @@ class DashboardViewModel @Inject constructor(
 
     private fun subscribeToNetworkStatus() {
         networkChecker.state
-            .onEach { _stateFlow.reduce { copy(isConnected = it) } }
+            .onEach {
+                _stateFlow.update { state -> state.copy(isConnected = it) }
+            }
             .launchIn(viewModelScope)
     }
 
     private fun fetchBreeds() {
         viewModelScope.launch {
             // switch ui to shimmer loading mode for breeds
-            _stateFlow.reduce {
-                copy(
-                    isBreedLoading = true,
-                    isBreedNoData = false,
-                    isBreedError = false,
-                )
+            _stateFlow.update {
+                it.copy(breedStateType = BreedStateType.Loading)
             }
 
             // simulate network delay to show proper loading
             delay(1000L)
 
             withContext(contextProvider.io) {
-                breedUseCase.getBreeds()
+                getBreedsUseCase.execute()
             }.onSuccess { list ->
                 if (list.isNotEmpty()) {
                     // we have breeds to show
-                    _stateFlow.reduce {
-                        copy(
-                            isBreedLoading = false,
-                            isBreedNoData = false,
-                            isBreedError = false,
-                            breedList = list
-                                .toListItem()
-                                .map {
-                                    it.copy(name = it.name.capitalise())
-                                }.toPersistentList(),
+                    _stateFlow.update { state ->
+                        state.copy(
+                            breedStateType = BreedStateType.Content(
+                                breedList = list.map {
+                                    Chip(name = it.name.capitalise())
+                                }.toPersistentList()
+                            ),
                         )
                     }
                 } else {
                     // we don't have breed to show, no data
-                    _stateFlow.reduce {
-                        copy(
-                            isBreedLoading = false,
-                            isBreedNoData = true,
-                            isBreedError = false,
-                        )
+                    _stateFlow.update { state ->
+                        state.copy(breedStateType = BreedStateType.NoData)
                     }
                 }
             }.onFailure {
                 // encountered an internal error while fetching breeds
-                _stateFlow.reduce {
-                    copy(
-                        isBreedLoading = false,
-                        isBreedNoData = false,
-                        isBreedError = true,
-                    )
+                _stateFlow.update { state ->
+                    state.copy(breedStateType = BreedStateType.Error)
                 }
             }
         }
     }
 
     private fun fetchSubBreeds() {
-        val state = stateFlow.value
-        if (state.selectedBreed == null) return
+        val selectedBreed = stateFlow.value.getBreedList()
+            ?.firstOrNull { breed -> breed.selected }
+            ?: return
 
         viewModelScope.launch {
             withContext(contextProvider.io) {
-                subBreedUseCase.getSubBreeds(breed = state.selectedBreed.lowercase())
+                getSubBreedsUseCase.execute(breed = selectedBreed.name.lowercase())
             }.onSuccess { list ->
                 if (list.isNotEmpty()) {
                     // we have sub breeds to show
-                    _stateFlow.reduce {
-                        copy(
+                    _stateFlow.update { state ->
+                        state.copy(
                             isDetailButtonActive = false,
-                            isSubBreedError = false,
-                            selectedSubBreed = null,
-                            subBreedList = list
-                                .toListItem()
-                                .map {
-                                    it.copy(name = it.name.capitalise())
-                                }.toPersistentList(),
+                            subBreedStateType = SubBreedStateType.Content(
+                                subBreedList = list.map {
+                                    Chip(name = it.name.capitalise())
+                                }.toPersistentList()
+                            ),
                         )
                     }
                 } else {
                     // we don't have sub breed to show
-                    _stateFlow.reduce {
-                        copy(
+                    _stateFlow.update { state ->
+                        state.copy(
                             isDetailButtonActive = true,
-                            isSubBreedError = false,
-                            selectedSubBreed = null,
-                            subBreedList = persistentListOf(),
+                            subBreedStateType = SubBreedStateType.NoData,
                         )
                     }
                 }
             }.onFailure {
                 // encountered an internal error while fetching sub breeds
-                _stateFlow.reduce {
-                    copy(
+                _stateFlow.update { state ->
+                    state.copy(
                         isDetailButtonActive = false,
-                        isSubBreedError = true,
-                        selectedSubBreed = null,
-                        subBreedList = persistentListOf(),
+                        subBreedStateType = SubBreedStateType.Error,
                     )
                 }
             }
@@ -147,15 +136,15 @@ class DashboardViewModel @Inject constructor(
     }
 
     fun selectBreed(name: String) {
-        val breedList = stateFlow.value.breedList
-            .map {
-                it.copy(selected = it.name == name)
-            }
+        val breedList = stateFlow.value.getBreedList()?.map {
+            it.copy(selected = it.name == name)
+        } ?: return
 
-        _stateFlow.reduce {
-            copy(
-                selectedBreed = name,
-                breedList = breedList.toPersistentList(),
+        _stateFlow.update { state ->
+            state.copy(
+                breedStateType = BreedStateType.Content(
+                    breedList = breedList.toPersistentList(),
+                ),
             )
         }
 
@@ -163,16 +152,32 @@ class DashboardViewModel @Inject constructor(
     }
 
     fun selectSubBreed(name: String) {
-        val subBreedList = stateFlow.value.subBreedList
-            .map {
-                it.copy(selected = it.name == name)
-            }
+        val subBreedList = stateFlow.value.getSubBreedList()?.map {
+            it.copy(selected = it.name == name)
+        } ?: return
 
-        _stateFlow.reduce {
-            copy(
+        _stateFlow.update { state ->
+            state.copy(
                 isDetailButtonActive = true,
-                selectedSubBreed = name,
-                subBreedList = subBreedList.toPersistentList(),
+                subBreedStateType = SubBreedStateType.Content(
+                    subBreedList = subBreedList.toPersistentList()
+                ),
+            )
+        }
+    }
+
+    fun onDetailButtonClick() {
+        val selectedBreedName =
+            stateFlow.value.getBreedList()?.firstOrNull { it.selected }?.name ?: return
+        val selectedSubBreedName =
+            stateFlow.value.getSubBreedList()?.firstOrNull { it.selected }?.name
+
+        viewModelScope.launch {
+            _effect.send(
+                Effect.NavigateToDetails(
+                    breed = selectedBreedName.lowercase(),
+                    subBreed = selectedSubBreedName?.lowercase(),
+                )
             )
         }
     }

@@ -9,7 +9,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import kotlin.time.Duration
 
 @ExtendWith(MainDispatcherRule::class)
 class SplashViewModelTest {
@@ -17,21 +16,16 @@ class SplashViewModelTest {
     private lateinit var testedClass: SplashViewModel
 
     @BeforeEach
-    fun setup(){
+    fun setup() {
         testedClass = SplashViewModel()
     }
 
     @Test
     fun `should return completed state when initialisation is done`() = runTest {
-        val expectedState = SplashViewContract.State(
-            isCompleted = true
-        )
+        val expectedState = SplashViewContract.Effect.Completed
 
-        testedClass.stateFlow.test(timeout = Duration.INFINITE) {
-            skipItems(1)
-
+        testedClass.effect.test {
             awaitItem() shouldBe expectedState
-
             ensureAllEventsConsumed()
         }
     }

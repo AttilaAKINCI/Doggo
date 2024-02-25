@@ -1,14 +1,10 @@
 package com.akinci.doggo.domain
 
 import com.akinci.doggo.core.network.NetworkChecker
-import com.akinci.doggo.data.breed.local.BreedEntity
-import com.akinci.doggo.data.breed.remote.BreedListServiceResponse
-import com.akinci.doggo.data.image.ImageRepository
-import com.akinci.doggo.data.image.local.ImageEntity
-import com.akinci.doggo.data.image.remote.ImageServiceResponse
-import com.akinci.doggo.domain.data.ImagesUseCase
+import com.akinci.doggo.data.repository.ImageRepository
+import com.akinci.doggo.domain.data.Image
+import io.kotest.matchers.result.shouldBeSuccess
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -23,27 +19,29 @@ class ImageUseCaseTest {
     private val networkCheckerMock: NetworkChecker = mockk(relaxed = true)
     private val dogNameProviderMock: DogNameProvider = mockk(relaxed = true)
 
-    private lateinit var testedClass: ImagesUseCase
+    private lateinit var testedClass: GetImagesUseCase
 
     @BeforeEach
     fun setup() {
         every { dogNameProviderMock.getRandomDogName() } returns "Afro"
 
         coEvery { imageRepositoryMock.getImage(any(), any()) } returns Result.success(
-            ImageServiceResponse(
-                message = listOf("imageUrl1","imageUrl2","imageUrl3")
+            listOf(
+                Image(breed = "hound", subBreed = "afghan", imageUrl = "rest_imageUrl1"),
+                Image(breed = "hound", subBreed = "afghan", imageUrl = "rest_imageUrl2"),
+                Image(breed = "hound", subBreed = "afghan", imageUrl = "rest_imageUrl3"),
             )
         )
 
         coEvery { imageRepositoryMock.getLocalImages(any(), any()) } returns Result.success(
             listOf(
-                ImageEntity(breed = "hound", subBreed = "afghan", imageUrl = "imageUrl1"),
-                ImageEntity(breed = "hound", subBreed = "afghan", imageUrl = "imageUrl2"),
-                ImageEntity(breed = "hound", subBreed = "afghan", imageUrl = "imageUrl3"),
+                Image(breed = "hound", subBreed = "afghan", imageUrl = "local_imageUrl1"),
+                Image(breed = "hound", subBreed = "afghan", imageUrl = "local_imageUrl2"),
+                Image(breed = "hound", subBreed = "afghan", imageUrl = "local_imageUrl3"),
             )
         )
 
-        testedClass = ImagesUseCase(
+        testedClass = GetImagesUseCase(
             imageRepository = imageRepositoryMock,
             networkChecker = networkCheckerMock,
             dogNameProvider = dogNameProviderMock,
@@ -54,17 +52,16 @@ class ImageUseCaseTest {
     fun `should return remote results when connected to network`() = runTest {
         every { networkCheckerMock.isConnected() } returns true
 
-        val result = testedClass.getImage(breed = "hound", subBreed = "afghan")
+        val result = testedClass.execute(breed = "hound", subBreed = "afghan")
 
-        result.isSuccess shouldBe true
-        result.getOrNull()!!.let {
+        result shouldBeSuccess {
             it.size shouldBe 3
             it[0].breed shouldBe "hound"
             it[0].subBreed shouldBe "afghan"
-            it[0].imageUrl shouldBe "imageUrl1"
+            it[0].imageUrl shouldBe "rest_imageUrl1"
             it[0].dogName shouldBe "Afro"
-            it[1].imageUrl shouldBe "imageUrl2"
-            it[2].imageUrl shouldBe "imageUrl3"
+            it[1].imageUrl shouldBe "rest_imageUrl2"
+            it[2].imageUrl shouldBe "rest_imageUrl3"
         }
 
         coVerify(exactly = 1) { imageRepositoryMock.getImage(any(), any()) }
@@ -75,7 +72,7 @@ class ImageUseCaseTest {
     fun `should save new images into local db while fetching from endpoint`() = runTest {
         every { networkCheckerMock.isConnected() } returns true
 
-        testedClass.getImage(breed = "hound", subBreed = "afghan")
+        testedClass.execute(breed = "hound", subBreed = "afghan")
 
         coVerify(exactly = 1) { imageRepositoryMock.insert(any()) }
     }
@@ -85,7 +82,7 @@ class ImageUseCaseTest {
         every { networkCheckerMock.isConnected() } returns true
         coEvery { imageRepositoryMock.getImage(any(), any()) } returns Result.failure(Exception())
 
-        val result = testedClass.getImage(breed = "hound", subBreed = "afghan")
+        val result = testedClass.execute(breed = "hound", subBreed = "afghan")
 
         result.isFailure shouldBe true
     }
@@ -94,14 +91,13 @@ class ImageUseCaseTest {
     fun `should return local results when not connected to network`() = runTest {
         every { networkCheckerMock.isConnected() } returns false
 
-        val result = testedClass.getImage(breed = "hound", subBreed = "afghan")
+        val result = testedClass.execute(breed = "hound", subBreed = "afghan")
 
-        result.isSuccess shouldBe true
-        result.getOrNull()!!.let {
+        result shouldBeSuccess {
             it.size shouldBe 3
-            it[0].imageUrl shouldBe "imageUrl1"
-            it[1].imageUrl shouldBe "imageUrl2"
-            it[2].imageUrl shouldBe "imageUrl3"
+            it[0].imageUrl shouldBe "local_imageUrl1"
+            it[1].imageUrl shouldBe "local_imageUrl2"
+            it[2].imageUrl shouldBe "local_imageUrl3"
         }
 
         coVerify(exactly = 0) { imageRepositoryMock.getImage(any(), any()) }
@@ -114,7 +110,7 @@ class ImageUseCaseTest {
         coEvery { imageRepositoryMock.getLocalImages(any(), any()) } returns
                 Result.failure(Exception())
 
-        val result = testedClass.getImage(breed = "hound", subBreed = "afghan")
+        val result = testedClass.execute(breed = "hound", subBreed = "afghan")
 
         result.isFailure shouldBe true
     }

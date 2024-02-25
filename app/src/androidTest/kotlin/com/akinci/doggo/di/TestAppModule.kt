@@ -2,7 +2,7 @@ package com.akinci.doggo.di
 
 import android.content.Context
 import androidx.room.Room
-import com.akinci.doggo.core.storage.AppDatabase
+import com.akinci.doggo.data.room.AppDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

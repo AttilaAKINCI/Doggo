@@ -31,33 +31,27 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
 import com.akinci.doggo.R
 import com.akinci.doggo.core.compose.UIModePreviews
 import com.akinci.doggo.domain.data.Image
+import com.akinci.doggo.ui.ds.components.CachedImage
 import com.akinci.doggo.ui.ds.components.Shimmer
 import com.akinci.doggo.ui.ds.components.TiledBackground
 import com.akinci.doggo.ui.ds.theme.DoggoTheme
 import com.akinci.doggo.ui.ds.theme.bodyLargeBold
 import com.akinci.doggo.ui.features.detail.DetailViewContract.ScreenArgs
 import com.akinci.doggo.ui.features.detail.DetailViewContract.State
-import com.akinci.doggo.ui.navigation.animation.SlideInOutHorizontally
+import com.akinci.doggo.ui.features.detail.DetailViewContract.Type
+import com.akinci.doggo.ui.navigation.SlideInOutHorizontally
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.collections.immutable.PersistentList
-import kotlinx.coroutines.Dispatchers
 
-@RootNavGraph
 @Destination(
     style = SlideInOutHorizontally::class,
     navArgsDelegate = ScreenArgs::class
@@ -71,7 +65,7 @@ fun DetailScreen(
 
     DetailScreenContent(
         uiState = uiState,
-        onBackPress = { navigator.popBackStack() }
+        onBackPress = { navigator.navigateUp() }
     )
 }
 
@@ -92,13 +86,11 @@ private fun DetailScreenContent(
                     onBackPress = onBackPress,
                 )
 
-                when {
-                    uiState.isLoading -> DetailScreen.Loading()
-                    uiState.isError -> DetailScreen.Error(action = onBackPress)
-                    uiState.isNoData -> DetailScreen.NoData(action = onBackPress)
-                    else -> DetailScreen.Content(
-                        images = uiState.images,
-                    )
+                when (val type = uiState.type) {
+                    Type.Loading -> DetailScreen.Loading()
+                    Type.Error -> DetailScreen.Error(action = onBackPress)
+                    Type.NoData -> DetailScreen.NoData(action = onBackPress)
+                    is Type.Content -> DetailScreen.Content(images = type.images)
                 }
             }
         }
@@ -150,6 +142,26 @@ private fun DetailScreen.Loading() {
 }
 
 @Composable
+private fun DetailScreen.Error(
+    action: () -> Unit
+) = DetailScreen.Info(
+    title = stringResource(id = R.string.general_error_title),
+    message = stringResource(id = R.string.detail_screen_error_message),
+    actionText = stringResource(id = R.string.detail_screen_go_back),
+    action = action,
+)
+
+@Composable
+private fun DetailScreen.NoData(
+    action: () -> Unit
+) = DetailScreen.Info(
+    title = stringResource(id = R.string.general_info_title),
+    message = stringResource(id = R.string.detail_screen_no_data_message),
+    actionText = stringResource(id = R.string.detail_screen_go_back),
+    action = action,
+)
+
+@Composable
 private fun DetailScreen.Info(
     title: String,
     message: String,
@@ -198,31 +210,9 @@ private fun DetailScreen.Info(
 }
 
 @Composable
-private fun DetailScreen.Error(
-    action: () -> Unit
-) = DetailScreen.Info(
-    title = stringResource(id = R.string.general_error_title),
-    message = stringResource(id = R.string.detail_screen_error_message),
-    actionText = stringResource(id = R.string.detail_screen_go_back),
-    action = action,
-)
-
-@Composable
-private fun DetailScreen.NoData(
-    action: () -> Unit
-) = DetailScreen.Info(
-    title = stringResource(id = R.string.general_info_title),
-    message = stringResource(id = R.string.detail_screen_no_data_message),
-    actionText = stringResource(id = R.string.detail_screen_go_back),
-    action = action,
-)
-
-@Composable
 private fun DetailScreen.Content(
     images: PersistentList<Image>,
 ) {
-    val context = LocalContext.current
-
     LazyColumn(
         state = rememberLazyListState(),
         contentPadding = PaddingValues(
@@ -239,25 +229,12 @@ private fun DetailScreen.Content(
                     .clip(shape = MaterialTheme.shapes.extraLarge)
             ) {
 
-                val imageRequest = ImageRequest.Builder(context)
-                    .data(it.imageUrl)
-                    .dispatcher(Dispatchers.IO)
-                    .memoryCacheKey(it.imageUrl)
-                    .diskCacheKey(it.imageUrl)
-                    .diskCachePolicy(CachePolicy.ENABLED)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .placeholder(R.drawable.ic_placeholder)
-                    .error(R.drawable.ic_placeholder)
-                    .fallback(R.drawable.ic_placeholder)
-                    .build()
-
-                AsyncImage(
+                CachedImage(
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(1.4f),
-                    model = imageRequest,
-                    contentScale = ContentScale.Crop,
-                    contentDescription = null,
+                    imageUrl = it.imageUrl,
+                    placeHolderId = R.drawable.ic_placeholder,
                 )
 
                 Column(
@@ -282,7 +259,7 @@ private fun DetailScreen.Content(
 
 @UIModePreviews
 @Composable
-private fun DefaultPreview() {
+private fun DetailScreenPreview() {
     DoggoTheme {
         DetailScreenContent(
             uiState = State(title = "Hound/Pax"),

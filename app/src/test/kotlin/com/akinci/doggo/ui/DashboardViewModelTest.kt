@@ -4,42 +4,40 @@ import app.cash.turbine.test
 import com.akinci.doggo.core.coroutine.MainDispatcherRule
 import com.akinci.doggo.core.coroutine.TestContextProvider
 import com.akinci.doggo.core.network.NetworkChecker
-import com.akinci.doggo.domain.breed.Breed
-import com.akinci.doggo.domain.breed.BreedUseCase
-import com.akinci.doggo.domain.subBreed.SubBreed
-import com.akinci.doggo.domain.subBreed.SubBreedUseCase
+import com.akinci.doggo.domain.GetBreedsUseCase
+import com.akinci.doggo.domain.GetSubBreedsUseCase
+import com.akinci.doggo.domain.data.Breed
+import com.akinci.doggo.domain.data.Chip
+import com.akinci.doggo.domain.data.SubBreed
+import com.akinci.doggo.ui.features.dashboard.DashboardViewContract
 import com.akinci.doggo.ui.features.dashboard.DashboardViewModel
-import io.kotest.matchers.ints.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import kotlin.time.Duration
 
 @ExtendWith(MainDispatcherRule::class)
 class DashboardViewModelTest {
 
     private val testContextProvider = TestContextProvider()
-    private val breedUseCaseMock: BreedUseCase = mockk(relaxed = true)
-    private val subBreedUseCaseMock: SubBreedUseCase = mockk(relaxed = true)
+    private val getBreedsUseCaseMock: GetBreedsUseCase = mockk(relaxed = true)
+    private val getSubBreedsUseCaseMock: GetSubBreedsUseCase = mockk(relaxed = true)
     private val networkCheckerMock: NetworkChecker = mockk(relaxed = true)
 
     @Test
     fun `should return correct network state when device is connected`() = runTest {
         every { networkCheckerMock.state } returns MutableStateFlow(true)
-        coEvery { breedUseCaseMock.getBreeds() } returns Result.failure(Exception())
+        coEvery { getBreedsUseCaseMock.execute() } returns Result.failure(Exception())
 
         val testedClass = buildVM()
 
         testedClass.stateFlow.test {
-            with(awaitItem()) {
-                isConnected shouldBe true
-            }
-
+            awaitItem().isConnected shouldBe true
             ensureAllEventsConsumed()
         }
     }
@@ -47,15 +45,12 @@ class DashboardViewModelTest {
     @Test
     fun `should return correct network state when device is not connected`() = runTest {
         every { networkCheckerMock.state } returns MutableStateFlow(false)
-        coEvery { breedUseCaseMock.getBreeds() } returns Result.failure(Exception())
+        coEvery { getBreedsUseCaseMock.execute() } returns Result.failure(Exception())
 
         val testedClass = buildVM()
 
         testedClass.stateFlow.test {
-            with(awaitItem()) {
-                isConnected shouldBe false
-            }
-
+            awaitItem().isConnected shouldBe false
             ensureAllEventsConsumed()
         }
     }
@@ -63,18 +58,14 @@ class DashboardViewModelTest {
     @Test
     fun `should return no data state when empty list is received`() = runTest {
         every { networkCheckerMock.state } returns MutableStateFlow(true)
-        coEvery { breedUseCaseMock.getBreeds() } returns Result.success(listOf())
+        coEvery { getBreedsUseCaseMock.execute() } returns Result.success(listOf())
 
         val testedClass = buildVM()
 
-        testedClass.stateFlow.test(timeout = Duration.INFINITE) {
-            skipItems(1) // skip initial state
+        testScheduler.advanceUntilIdle()
 
-            with(awaitItem()) {
-                isBreedLoading shouldBe true
-                isBreedNoData shouldBe true
-                isBreedError shouldBe false
-            }
+        testedClass.stateFlow.test {
+            awaitItem().breedStateType shouldBe DashboardViewContract.BreedStateType.NoData
             ensureAllEventsConsumed()
         }
     }
@@ -82,7 +73,7 @@ class DashboardViewModelTest {
     @Test
     fun `should return correct breed list state when breed list is received`() = runTest {
         every { networkCheckerMock.state } returns MutableStateFlow(true)
-        coEvery { breedUseCaseMock.getBreeds() } returns Result.success(
+        coEvery { getBreedsUseCaseMock.execute() } returns Result.success(
             listOf(
                 Breed(name = "hound"),
                 Breed(name = "bulldog"),
@@ -91,16 +82,15 @@ class DashboardViewModelTest {
 
         val testedClass = buildVM()
 
-        testedClass.stateFlow.test(timeout = Duration.INFINITE) {
-            skipItems(1) // skip initial state
+        testScheduler.advanceUntilIdle()
 
-            with(awaitItem()) {
-                breedList.size shouldBeGreaterThan 0
-                breedList[0].name shouldBe "Hound"
-                isBreedLoading shouldBe false
-                isBreedNoData shouldBe false
-                isBreedError shouldBe false
-            }
+        testedClass.stateFlow.test {
+            awaitItem().breedStateType shouldBe DashboardViewContract.BreedStateType.Content(
+                breedList = persistentListOf(
+                    Chip(name = "Hound"),
+                    Chip(name = "Bulldog"),
+                )
+            )
             ensureAllEventsConsumed()
         }
     }
@@ -108,28 +98,23 @@ class DashboardViewModelTest {
     @Test
     fun `should return error state when breed use case returns failure`() = runTest {
         every { networkCheckerMock.state } returns MutableStateFlow(true)
-        coEvery { breedUseCaseMock.getBreeds() } returns Result.failure(Exception())
+        coEvery { getBreedsUseCaseMock.execute() } returns Result.failure(Exception())
 
         val testedClass = buildVM()
 
-        testedClass.stateFlow.test(timeout = Duration.INFINITE) {
-            skipItems(1) // skip initial state
+        testScheduler.advanceUntilIdle()
 
-            with(awaitItem()) {
-                isBreedLoading shouldBe false
-                isBreedNoData shouldBe false
-                isBreedError shouldBe true
-            }
+        testedClass.stateFlow.test {
+            awaitItem().breedStateType shouldBe DashboardViewContract.BreedStateType.Error
             ensureAllEventsConsumed()
         }
     }
 
-
     @Test
     fun `should return selected breed in state when any breed selected`() = runTest {
         every { networkCheckerMock.state } returns MutableStateFlow(true)
-        coEvery { subBreedUseCaseMock.getSubBreeds(any()) } returns Result.failure(Exception())
-        coEvery { breedUseCaseMock.getBreeds() } returns Result.success(
+        coEvery { getSubBreedsUseCaseMock.execute(any()) } returns Result.failure(Exception())
+        coEvery { getBreedsUseCaseMock.execute() } returns Result.success(
             listOf(
                 Breed(name = "hound"),
                 Breed(name = "bulldog"),
@@ -138,17 +123,18 @@ class DashboardViewModelTest {
 
         val testedClass = buildVM()
 
-        testedClass.stateFlow.test(timeout = Duration.INFINITE) {
-            skipItems(1) // skip initial state
-            skipItems(1) // skip breed list state
+        testScheduler.advanceUntilIdle()
 
+        testedClass.stateFlow.test {
             testedClass.selectBreed("Hound")
+            skipItems(1)
 
-            with(awaitItem()) {
-                selectedBreed shouldBe "Hound"
-                breedList.firstOrNull { it.selected }?.name shouldBe "Hound"
-            }
-
+            awaitItem().breedStateType shouldBe DashboardViewContract.BreedStateType.Content(
+                breedList = persistentListOf(
+                    Chip(name = "Hound", selected = true),
+                    Chip(name = "Bulldog"),
+                )
+            )
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -156,13 +142,13 @@ class DashboardViewModelTest {
     @Test
     fun `should return correct subBreed list state when a breed selected`() = runTest {
         every { networkCheckerMock.state } returns MutableStateFlow(true)
-        coEvery { breedUseCaseMock.getBreeds() } returns Result.success(
+        coEvery { getBreedsUseCaseMock.execute() } returns Result.success(
             listOf(
                 Breed(name = "hound"),
                 Breed(name = "bulldog"),
             )
         )
-        coEvery { subBreedUseCaseMock.getSubBreeds("hound") } returns Result.success(
+        coEvery { getSubBreedsUseCaseMock.execute("hound") } returns Result.success(
             listOf(
                 SubBreed(breed = "hound", name = "afghan"),
                 SubBreed(breed = "hound", name = "husky"),
@@ -171,19 +157,21 @@ class DashboardViewModelTest {
 
         val testedClass = buildVM()
 
-        testedClass.stateFlow.test(timeout = Duration.INFINITE) {
-            skipItems(1) // skip initial state
-            skipItems(1) // skip breed list state
+        testScheduler.advanceUntilIdle()
 
+        testedClass.stateFlow.test {
             testedClass.selectBreed("Hound")
 
-            skipItems(1) // skip breed selection state
+            skipItems(2) // skip initial state
 
             with(awaitItem()) {
                 isDetailButtonActive shouldBe false
-                isSubBreedError shouldBe false
-                selectedSubBreed shouldBe null
-                subBreedList.size shouldBeGreaterThan 0
+                subBreedStateType shouldBe DashboardViewContract.SubBreedStateType.Content(
+                    subBreedList = persistentListOf(
+                        Chip(name = "Afghan", selected = false),
+                        Chip(name = "Husky", selected = false),
+                    )
+                )
             }
 
             ensureAllEventsConsumed()
@@ -193,30 +181,27 @@ class DashboardViewModelTest {
     @Test
     fun `should return no data state when for empty list after a breed selected`() = runTest {
         every { networkCheckerMock.state } returns MutableStateFlow(true)
-        coEvery { breedUseCaseMock.getBreeds() } returns Result.success(
+        coEvery { getBreedsUseCaseMock.execute() } returns Result.success(
             listOf(
                 Breed(name = "hound"),
                 Breed(name = "bulldog"),
             )
         )
-        coEvery { subBreedUseCaseMock.getSubBreeds("hound") } returns
+        coEvery { getSubBreedsUseCaseMock.execute("hound") } returns
                 Result.success(listOf())
 
         val testedClass = buildVM()
 
-        testedClass.stateFlow.test(timeout = Duration.INFINITE) {
-            skipItems(1) // skip initial state
-            skipItems(1) // skip breed list state
+        testScheduler.advanceUntilIdle()
 
+        testedClass.stateFlow.test {
             testedClass.selectBreed("Hound")
 
-            skipItems(1) // skip breed selection state
+            skipItems(2)
 
             with(awaitItem()) {
                 isDetailButtonActive shouldBe true
-                isSubBreedError shouldBe false
-                selectedSubBreed shouldBe null
-                subBreedList.size shouldBe 0
+                subBreedStateType shouldBe DashboardViewContract.SubBreedStateType.NoData
             }
 
             ensureAllEventsConsumed()
@@ -227,30 +212,27 @@ class DashboardViewModelTest {
     fun `should return error state when for subBreedUseCase response fails after a breed selected`() =
         runTest {
             every { networkCheckerMock.state } returns MutableStateFlow(true)
-            coEvery { breedUseCaseMock.getBreeds() } returns Result.success(
+            coEvery { getBreedsUseCaseMock.execute() } returns Result.success(
                 listOf(
                     Breed(name = "hound"),
                     Breed(name = "bulldog"),
                 )
             )
-            coEvery { subBreedUseCaseMock.getSubBreeds("hound") } returns
+            coEvery { getSubBreedsUseCaseMock.execute("hound") } returns
                     Result.failure(Exception())
 
             val testedClass = buildVM()
 
-            testedClass.stateFlow.test(timeout = Duration.INFINITE) {
-                skipItems(1) // skip initial state
-                skipItems(1) // skip breed list state
+            testScheduler.advanceUntilIdle()
 
+            testedClass.stateFlow.test {
                 testedClass.selectBreed("Hound")
 
-                skipItems(1) // skip breed selection state
+                skipItems(2)
 
                 with(awaitItem()) {
                     isDetailButtonActive shouldBe false
-                    isSubBreedError shouldBe true
-                    selectedSubBreed shouldBe null
-                    subBreedList.size shouldBe 0
+                    subBreedStateType shouldBe DashboardViewContract.SubBreedStateType.Error
                 }
 
                 ensureAllEventsConsumed()
@@ -258,52 +240,55 @@ class DashboardViewModelTest {
         }
 
     @Test
-    fun `should return correct subBreed list state when a subBreed selected`() =
-        runTest {
-            every { networkCheckerMock.state } returns MutableStateFlow(true)
-            coEvery { breedUseCaseMock.getBreeds() } returns Result.success(
-                listOf(
-                    Breed(name = "hound"),
-                    Breed(name = "bulldog"),
-                )
+    fun `should return correct subBreed list state when a subBreed selected`() = runTest {
+        every { networkCheckerMock.state } returns MutableStateFlow(true)
+        coEvery { getBreedsUseCaseMock.execute() } returns Result.success(
+            listOf(
+                Breed(name = "hound"),
+                Breed(name = "bulldog"),
             )
-            coEvery { subBreedUseCaseMock.getSubBreeds("hound") } returns Result.success(
-                listOf(
-                    SubBreed(breed = "hound", name = "afghan"),
-                    SubBreed(breed = "hound", name = "husky"),
-                )
+        )
+        coEvery { getSubBreedsUseCaseMock.execute("hound") } returns Result.success(
+            listOf(
+                SubBreed(breed = "hound", name = "afghan"),
+                SubBreed(breed = "hound", name = "husky"),
             )
+        )
 
-            val testedClass = buildVM()
+        val testedClass = buildVM()
 
-            testedClass.stateFlow.test(timeout = Duration.INFINITE) {
-                skipItems(1) // skip initial state
-                skipItems(1) // skip breed list state
+        testScheduler.advanceUntilIdle()
 
-                testedClass.selectBreed("Hound")
+        testedClass.stateFlow.test {
+            testedClass.selectBreed("Hound")
+            testedClass.selectSubBreed("Afghan")
 
-                skipItems(1) // skip breed selection state
-                skipItems(1) // skip subBreed list state
+            skipItems(3)
 
-                testedClass.selectSubBreed("Afghan")
-
-                with(awaitItem()) {
-                    isDetailButtonActive shouldBe true
-                    selectedBreed shouldBe "Hound"
-                    selectedSubBreed shouldBe "Afghan"
-                    breedList.firstOrNull { it.selected }?.name shouldBe "Hound"
-                    subBreedList.firstOrNull { it.selected }?.name shouldBe "Afghan"
-                }
-
-                ensureAllEventsConsumed()
+            with(awaitItem()) {
+                isDetailButtonActive shouldBe true
+                breedStateType shouldBe DashboardViewContract.BreedStateType.Content(
+                    breedList = persistentListOf(
+                        Chip(name = "Hound", selected = true),
+                        Chip(name = "Bulldog", selected = false),
+                    )
+                )
+                subBreedStateType shouldBe DashboardViewContract.SubBreedStateType.Content(
+                    subBreedList = persistentListOf(
+                        Chip(name = "Afghan", selected = true),
+                        Chip(name = "Husky", selected = false),
+                    )
+                )
             }
-        }
 
+            ensureAllEventsConsumed()
+        }
+    }
 
     private fun buildVM() = DashboardViewModel(
         contextProvider = testContextProvider,
-        breedUseCase = breedUseCaseMock,
-        subBreedUseCase = subBreedUseCaseMock,
+        getBreedsUseCase = getBreedsUseCaseMock,
+        getSubBreedsUseCase = getSubBreedsUseCaseMock,
         networkChecker = networkCheckerMock,
     )
 }

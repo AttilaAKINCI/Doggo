@@ -3,11 +3,13 @@ package com.akinci.doggo.data
 import com.akinci.doggo.core.application.AppConfig
 import com.akinci.doggo.core.network.HttpClientFactory
 import com.akinci.doggo.core.network.HttpEngineFactoryMock
-import com.akinci.doggo.core.storage.AppDatabase
-import com.akinci.doggo.data.breed.BreedRepository
-import com.akinci.doggo.data.breed.local.BreedDao
-import com.akinci.doggo.data.breed.local.BreedEntity
+import com.akinci.doggo.data.repository.BreedRepository
+import com.akinci.doggo.data.room.breed.BreedDao
+import com.akinci.doggo.data.room.breed.BreedEntity
+import com.akinci.doggo.domain.data.Breed
 import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.result.shouldBeFailure
+import io.kotest.matchers.result.shouldBeSuccess
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpStatusCode
 import io.mockk.coEvery
@@ -17,9 +19,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class BreedRepositoryTest {
-
-    private val appDatabaseMock: AppDatabase = mockk(relaxed = true)
     private val appConfigMock: AppConfig = mockk(relaxed = true)
+    private val breedDaoMock: BreedDao = mockk(relaxed = true)
 
     private val httpEngineFactory = HttpEngineFactoryMock()
     private val httpClientFactory = HttpClientFactory(
@@ -28,21 +29,18 @@ class BreedRepositoryTest {
     )
 
     private lateinit var testedClass: BreedRepository
-    private lateinit var dao: BreedDao
 
     @BeforeEach
     fun setup() {
-        dao = appDatabaseMock.getBreedDao()
-
         testedClass = BreedRepository(
-            appDatabase = appDatabaseMock,
+            breedDao = breedDaoMock,
             httpClient = httpClientFactory.create()
         )
     }
 
     @Test
     fun `should return success when breeds are successfully inserted`() = runTest {
-        coEvery { dao.insertBreeds(any()) } returns Unit
+        coEvery { breedDaoMock.insertBreeds(any()) } returns Unit
 
         val breeds = listOf(BreedEntity(name = "Hound"))
 
@@ -53,7 +51,7 @@ class BreedRepositoryTest {
 
     @Test
     fun `should return failure when room db fails on breed insert`() = runTest {
-        coEvery { dao.insertBreeds(any()) } throws Exception()
+        coEvery { breedDaoMock.insertBreeds(any()) } throws Exception()
 
         val breeds = listOf(BreedEntity(name = "Hound"))
 
@@ -64,15 +62,14 @@ class BreedRepositoryTest {
 
     @Test
     fun `should return local breeds when there is a locally saved breeds`() = runTest {
-        coEvery { dao.getAllBreeds() } returns listOf(
+        coEvery { breedDaoMock.getAllBreeds() } returns listOf(
             BreedEntity(name = "Hound"),
             BreedEntity(name = "Bulldog")
         )
 
         val result = testedClass.getLocalBreeds()
 
-        result.isSuccess shouldBe true
-        result.getOrNull()!!.let {
+        result shouldBeSuccess {
             it.size shouldBe 2
             it[0].name shouldBe "Hound"
             it[1].name shouldBe "Bulldog"
@@ -81,7 +78,7 @@ class BreedRepositoryTest {
 
     @Test
     fun `should return failure when exception occurred during breed fetch room query`() = runTest {
-        coEvery { dao.getAllBreeds() } throws Exception()
+        coEvery { breedDaoMock.getAllBreeds() } throws Exception()
 
         val result = testedClass.getLocalBreeds()
 
@@ -94,15 +91,14 @@ class BreedRepositoryTest {
 
         val result = testedClass.getBreeds()
 
-        result.isSuccess shouldBe true
-        result.getOrNull()!!.let {
-            it.message.keys shouldContain "bakharwal"
-            it.message.keys shouldContain "australian"
-            it.message.keys shouldContain "appenzeller"
-            it.message.keys shouldContain "akita"
-            it.message.keys shouldContain "airedale"
-            it.message.keys shouldContain "african"
-            it.message.keys shouldContain "affenpinscher"
+        result.shouldBeSuccess { breeds ->
+            breeds shouldContain Breed(name = "bakharwal")
+            breeds shouldContain Breed(name = "australian")
+            breeds shouldContain Breed(name = "appenzeller")
+            breeds shouldContain Breed(name = "akita")
+            breeds shouldContain Breed(name = "airedale")
+            breeds shouldContain Breed(name = "african")
+            breeds shouldContain Breed(name = "affenpinscher")
         }
     }
 
@@ -121,8 +117,7 @@ class BreedRepositoryTest {
 
         val result = testedClass.getBreeds()
 
-        result.isFailure shouldBe true
-        result.exceptionOrNull()!!.let {
+        result shouldBeFailure {
             it.message shouldBe "Simulated Network Exception"
         }
     }
