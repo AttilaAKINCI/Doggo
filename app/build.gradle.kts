@@ -2,7 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
-    kotlin("plugin.serialization") version "1.9.20"
+    kotlin("plugin.serialization") version "1.9.22"
     id("kotlin-parcelize")
     id("com.google.dagger.hilt.android")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
@@ -23,7 +23,7 @@ android {
         minSdk = 26
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "com.akinci.doggo.HiltTestRunner"
         vectorDrawables {
@@ -57,7 +57,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.4"
+        kotlinCompilerExtensionVersion = "1.5.9"
     }
     lint {
         abortOnError = true
@@ -85,16 +85,16 @@ android {
 }
 
 dependencies {
-    val lifecycleVersion = "2.6.2"
-    val composeBomVersion = "2023.10.01"
-    val jUnit5Version = "5.10.1"
+    val lifecycleVersion = "2.7.0"
+    val composeBomVersion = "2024.02.01"
+    val jUnit5Version = "5.10.2"
     val coroutinesVersion = "1.7.3"
-    val hiltVersion = "2.48.1"
-    val composeDestinationsVersion = "1.9.54"
-    val ktorVersion = "2.3.6"
-    val roomVersion = "2.6.0"
+    val hiltVersion = "2.50"
+    val composeDestinationsVersion = "1.10.0"
+    val ktorVersion = "2.3.8"
+    val roomVersion = "2.6.1"
     val coilVersion = "2.5.0"
-    val lottieVersion = "6.2.0"
+    val lottieVersion = "6.3.0"
 
     // CORE
     implementation("androidx.core:core-ktx:1.12.0")
@@ -126,7 +126,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycleVersion")
 
     // COMPOSE
-    implementation("androidx.activity:activity-compose:1.8.1")
+    implementation("androidx.activity:activity-compose:1.8.2")
     implementation(platform("androidx.compose:compose-bom:$composeBomVersion"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
@@ -135,14 +135,14 @@ dependencies {
     implementation("androidx.compose.material3:material3")
 
     // NAVIGATION
-    implementation("androidx.navigation:navigation-compose:2.7.5")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("io.github.raamcosta.compose-destinations:core:$composeDestinationsVersion")
     implementation("io.github.raamcosta.compose-destinations:animations-core:$composeDestinationsVersion")
     ksp("io.github.raamcosta.compose-destinations:ksp:$composeDestinationsVersion")
 
     // DEPENDENCY INJECTION - HILT
     implementation("com.google.dagger:hilt-android:$hiltVersion")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     ksp("com.google.dagger:hilt-android-compiler:$hiltVersion")
 
     // LOGGING
@@ -159,7 +159,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:$jUnit5Version")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
     testImplementation("io.kotest:kotest-assertions-core:5.8.0")
-    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation("io.mockk:mockk:1.13.9")
     testImplementation("app.cash.turbine:turbine:1.0.0")
 
     // UI/INSTRUMENTATION TESTING
