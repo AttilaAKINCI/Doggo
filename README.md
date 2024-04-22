@@ -1,6 +1,9 @@
 # Doggo
 Doggo app provides a inspection on dogs according to their breeds and sub-breeds
 
+If you find my repository helpful, you can [buy me a coffee](https://buymeacoffee.com/attilaakinci
+) to see more PoC samples 🍻☕️ 
+
 [APK Link (https://drive.google.com/file/d/1mupugSa4wd49kUxyL2qm1ZkH9nuTZXAl/view?usp=sharing)](https://drive.google.com/file/d/1mupugSa4wd49kUxyL2qm1ZkH9nuTZXAl/view?usp=sharing)
 
 ## How to run
